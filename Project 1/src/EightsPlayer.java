@@ -229,11 +229,11 @@ public class EightsPlayer {
     	/*TO DO*/
     	
     	int nummoves = 0;
-    	int length = 0;
 
-    	Node parent = node.getparent();
-    	Node current = null;
-    	Node[] parentArray = null;
+
+    	//Node parent = node.getparent();
+    	//Node current = null;
+    	//Node[] parentArray = null;
 
     	while(this.getparent() != null) {
     		System.out.println(this.print);
@@ -273,37 +273,33 @@ public class EightsPlayer {
 	 * Runs Breadth First Search to find the goal state.
 	 * Return true if a solution is found; otherwise returns false.
 	 */
-	public static boolean runBFS(Node initNode)
-	{
+	public static boolean runBFS(Node initNode) {		
+		if(initNode.isGoal())
+			return true;
 		Queue<Node> Frontier = new LinkedList<Node>();
-		ArrayList<Node> Explored = new ArrayList<Node>();
-		
 		Frontier.add(initNode);
-		int location = 0;
-		Explored.add(location, initNode);
-		int maxDepth = 13;
-		
-		boolean result = false;
-
-		if(initNode!= null) {
-				return result;	
-		}
-		
-		while(!Frontier.isEmpty()) {
-			Node n = Frontier.remove();
-			Node child = null;
-			while((child = Frontier.peek())!=null) {
-				Explored.add(location, child);
+		ArrayList<Node> Explored = new ArrayList<Node>();
+		int maxDepth = 20;
+		//Explore 
+		while(!Frontier.isEmpty()){
+			Node node = Frontier.remove();
+			Explored.add(node);
+			node.print(node);
+			nummoves++;
+			//Create child with node info, check is it is solution, then return true, 
+			//or add child to the frontier and continue searching
+			for(int[][] bb : node.expand()){
+				Node child = new Node(node,node.getdepth()+1,bb);
+				if (!(Explored.contains(child)| Frontier.contains(child))){
+					if(child.isGoal())
+						return true;
+					Frontier.add(child);
+					numnodes++;
+				}
 			}
-			location +=1;
 		}
-		
-		
-		return true;
-		
-		/*TO DO*/
-		
-	}//BFS
+		return false;
+	}//endofBFS
 	
 	
 	
