@@ -1,6 +1,7 @@
 
 import java.lang.Thread.State;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 import java.util.ArrayList;
@@ -230,13 +231,8 @@ public class EightsPlayer {
     	
     	int nummoves = 0;
 
-
-    	//Node parent = node.getparent();
-    	//Node current = null;
-    	//Node[] parentArray = null;
-
-    	while(this.getparent() != null) {
-    		System.out.println(this.print);
+    	while(node.getparent() != null) {
+    		node.print(node);
     		nummoves ++;
     	}
 
@@ -283,6 +279,9 @@ public class EightsPlayer {
 		//Explore 
 		while(!Frontier.isEmpty()){
 			Node node = Frontier.remove();
+			if(node.getdepth() > maxDepth){
+				return false;
+			}
 			Explored.add(node);
 			node.print(node);
 			nummoves++;
@@ -313,8 +312,46 @@ public class EightsPlayer {
 	 */
 	public static boolean runAStar(Node initNode, int heuristic)
 	{
-		return true;
-		
+	
+		if(initNode.isGoal())
+			return true;
+		PriorityQueue<Node> Frontier = new PriorityQueue<Node>();
+		Queue<Node> Explored = new LinkedList<Node>();
+		initNode.setfvalue();
+		Frontier.add(initNode);
+
+		int maxDepth = 20;
+		//Explore 
+		while(!Frontier.isEmpty()){
+			Node node = Frontier.remove();
+			if(node.isGoal())
+					return true;
+			if(node.getdepth()>=maxDepth)
+				return false;
+			Explored.add(node);
+			nummoves++;
+			//Create child with node info, check is it is solution, then return true, 
+			//or add child to the frontier and continue searching
+			for(int[][] bb : node.expand()){
+				Node child = new Node(node,node.getgvalue()+1, node.evaluateHeuristic(),bb);
+				if (!Explored.contains(child)){
+					child.setfvalue();
+					if(Frontier.contains(child)) {
+						Node tempChild = Frontier.peek();
+						Frontier.remove();
+						Frontier.remove();
+						Frontier.add(tempChild); //this might need to be fixed
+					}
+					else {
+						Frontier.add(child);
+					}
+				}
+				else {
+					numnodes++;
+				}
+			}		
+		}
+		return false;
 	}
 	
 }

@@ -66,9 +66,6 @@ public class Node{
     	return this.board;
     }
 
-    //public Node getChild() {
-     // return child;
-    //}
     
     
     /*************
@@ -361,6 +358,7 @@ public class Node{
     
     private double gvalue; //To be used by A*Star search
     private double hvalue; //To be used by A*Star search
+    private double fvalue;
     
     
     /**
@@ -404,6 +402,14 @@ public class Node{
     {
     	return this.hvalue;
     }
+
+    public void setfvalue() {
+        this.fvalue = getgvalue() + gethvalue();
+    }
+
+    public double getfvalue() {
+        return this.fvalue;
+    }
     
     
     /**
@@ -411,7 +417,7 @@ public class Node{
      * Returns the heuristic value. The heuristic for the state of this node is the sum of Manhattan
      * distances from each tile's position to that tile's final position.
      */
-   // public double evaluateHeuristic() {
+    public double evaluateHeuristic() {
         // TO DO
         /*
          * Implementation notes:
@@ -419,9 +425,22 @@ public class Node{
          * stored in "int[][] board".
          * You may find the method "getManhattanDistance" useful.
          */
-
-    
-    //}
+        int[][] board = this.getboard();
+        double sum = 0.0;
+        
+        for(int i =0; i<3; i++) {
+            for(int j = 0; j<3; j++) {
+                for(int z = i; z<3; z++) {
+                    for(int x = j; x<3; x++) {
+                        if(board[i][j] == goal[z][x]) {
+                            sum +=getManhattanDistance(i,j,z,x);
+                        } 
+                    }
+                }
+            }
+        }
+        return sum;
+    }
     
     /**
      * Helper method used by A* Search only. 
