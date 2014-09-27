@@ -313,8 +313,39 @@ public class EightsPlayer {
 	 */
 	public static boolean runAStar(Node initNode, int heuristic)
 	{
-		return true;
-		
-	}
+	
+			if(initNode.isGoal())
+				return true;
+			PriorityQueue<Node> Frontier = new LinkedList<Node>();
+			Queue<Node> Explored = new LinkedList<Node>();
+			initNode.setfvalue();
+			Frontier.add(initNode);
+
+			int maxDepth = 20;
+			//Explore 
+			while(!Frontier.isEmpty()){
+				Node node = Frontier.remove();
+				if(node.isGoal())
+						return true;
+				if(node.depth()>=maxDepth)
+					return false;
+				Explored.add(node);
+				nummoves++;
+				//Create child with node info, check is it is solution, then return true, 
+				//or add child to the frontier and continue searching
+				for(int[][] bb : node.expand()){
+					int xxx = getManhattanDistance(child.getboard())
+					Node child = new Node(node,node.getgvalue()+1, ,bb);
+					if (!(Explored.contains(child)| Frontier.contains(child))){
+						child.setfvalue();
+						Frontier.add(child);
+
+					else if()
+						numnodes++;
+					}
+				}		
+			}
+			return false;
+			}
 	
 }
