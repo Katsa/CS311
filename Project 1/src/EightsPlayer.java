@@ -1,11 +1,11 @@
-
 import java.lang.Thread.State;
 import java.util.LinkedList;
-import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Random;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.PriorityQueue;
+import java.util.Comparator;
 
 
 /*
@@ -58,9 +58,7 @@ public class EightsPlayer {
 			//if the search returns a solution
 			if(result){
 				
-				numsolutions++;
-				
-				
+				numsolutions++;			
 				System.out.println("Number of nodes generated to solve: " + numnodes);
 				System.out.println("Number of moves to solve: " + nummoves);			
 				System.out.println("Number of solutions so far: " + numsolutions);
@@ -82,7 +80,7 @@ public class EightsPlayer {
 			System.out.println("Average number of nodes generated for "+numsolutions+" solutions: "+numnodes/numsolutions);
 		}
 		else
-			System.out.println("No solutions in "+numiterations+"iterations.");
+			System.out.println("No solutions in "+numiterations+" iterations.");
 		
 	}
 	
@@ -118,7 +116,7 @@ public class EightsPlayer {
 		
 		for(int i=0; i<board.length; i++){
 			for(int j=0; j<board[0].length; j++){
-				System.out.println(stbd.charAt(k));
+				//System.out.println(stbd.charAt(k));
 				board[i][j]= Integer.parseInt(stbd.substring(k, k+1));
 				k++;
 			}
@@ -127,10 +125,11 @@ public class EightsPlayer {
 		
 		for(int i=0; i<board.length; i++){
 			for(int j=0; j<board[0].length; j++){
-				System.out.println(board[i][j]);
+				//System.out.println(board[i][j]);
 			}
 			System.out.println();
 		}
+
 		
 		
 		Node newNode = new Node(null,0, board);
@@ -228,38 +227,15 @@ public class EightsPlayer {
     public static void printSolution(Node node) {
     	
     	/*TO DO*/
-    	
-    	int nummoves = 0;
-
-    	while(node.getparent() != null) {
-    		node.print(node);
-    		nummoves ++;
+   
+    	if(node.getparent()== null){
+    		node.print(node);    		
+    	}else{
+    		printSolution(node.getparent());
+    		node.print(node);    		
+    		nummoves++;
     	}
-
-
-
-    	/*if(parent != null) {
-    		printSolution(parent);
-    	}
-    	parentArray[0] = parent;
-    	//current = parent.getChild();
-
-    	nummoves += 1;
-    	length = parent.getdepth();
-
-    	for(int i = 1; i < length; i++) {
-    		parentArray[i] = current;
-    		current = current.getChild();
-    		nummoves += 1;
-    	}
-
-    	for(int i = 0; i<parentArray.length; i++) {
-			System.out.println(parentArray[i].getboard());
-
-    	}
-    	System.out.println(nummoves);
-    	*/
-    }
+	 }
 	
 	
 	
@@ -270,8 +246,9 @@ public class EightsPlayer {
 	 * Return true if a solution is found; otherwise returns false.
 	 */
 	public static boolean runBFS(Node initNode) {		
-		if(initNode.isGoal())
+		if(initNode.isGoal()){
 			return true;
+		}
 		Queue<Node> Frontier = new LinkedList<Node>();
 		Frontier.add(initNode);
 		ArrayList<Node> Explored = new ArrayList<Node>();
@@ -279,19 +256,16 @@ public class EightsPlayer {
 		//Explore 
 		while(!Frontier.isEmpty()){
 			Node node = Frontier.remove();
-			if(node.getdepth() > maxDepth){
-				return false;
-			}
 			Explored.add(node);
-			node.print(node);
-			nummoves++;
 			//Create child with node info, check is it is solution, then return true, 
 			//or add child to the frontier and continue searching
 			for(int[][] bb : node.expand()){
 				Node child = new Node(node,node.getdepth()+1,bb);
 				if (!(Explored.contains(child)| Frontier.contains(child))){
-					if(child.isGoal())
+					if(child.isGoal()){
+						printSolution(child);
 						return true;
+					}
 					Frontier.add(child);
 					numnodes++;
 				}
@@ -313,45 +287,62 @@ public class EightsPlayer {
 	public static boolean runAStar(Node initNode, int heuristic)
 	{
 	
-		if(initNode.isGoal())
-			return true;
-		PriorityQueue<Node> Frontier = new PriorityQueue<Node>();
-		Queue<Node> Explored = new LinkedList<Node>();
-		initNode.setfvalue();
-		Frontier.add(initNode);
-
-		int maxDepth = 20;
-		//Explore 
-		while(!Frontier.isEmpty()){
-			Node node = Frontier.remove();
-			if(node.isGoal())
-					return true;
-			if(node.getdepth()>=maxDepth)
-				return false;
-			Explored.add(node);
-			nummoves++;
-			//Create child with node info, check is it is solution, then return true, 
-			//or add child to the frontier and continue searching
-			for(int[][] bb : node.expand()){
-				Node child = new Node(node,node.getgvalue()+1, node.evaluateHeuristic(),bb);
-				if (!Explored.contains(child)){
-					child.setfvalue();
-					if(Frontier.contains(child)) {
-						Node tempChild = Frontier.peek();
-						Frontier.remove();
-						Frontier.remove();
-						Frontier.add(tempChild); //this might need to be fixed
-					}
-					else {
-						Frontier.add(child);
-					}
+			if(initNode.isGoal())
+				return true;
+			PriorityQueue<Node> Frontier = new PriorityQueue<Node>(11,new Comparator<Node>(){
+				public int compare(Node n1, Node n2){
+					double fn1=n1.getfvalue();
+					double fn2=n2.getfvalue();
+					if(fn1<fn2) return -1;
+					if(fn1>fn2) return 1;
+					return 0;
 				}
-				else {
-					numnodes++;
+			});
+			Queue<Node> Explored = new LinkedList<Node>();
+			initNode.setgvalue(0.0);
+			initNode.sethvalue(initNode.evaluateHeuristic());
+			initNode.setfvalue();
+			Frontier.add(initNode);
+			int maxDepth = 20;
+			//Explore 
+			while(!Frontier.isEmpty()){
+				Node node = Frontier.poll();
+				if(node.isGoal()){
+						printSolution(node);
+						return true;
+					}
+				if(node.getdepth()>=maxDepth){
+					System.out.print("Maximum depth of "+maxDepth+" reached.");
+					return false;
 				}
-			}		
-		}
-		return false;
-	}
+				Explored.add(node);
+				//Create child with node info, check is it is solution, then return true, 
+				//or add child to the frontier and continue searching
+				for(int[][] board : node.expand()){
+					Node child = new Node(node,node.getdepth()+1,board);
+					if (!(Explored.contains(child))){
+						if (!(Frontier.contains(child))){
+							child.setgvalue(node.getgvalue()+1);
+							child.sethvalue(child.evaluateHeuristic());
+							child.setfvalue();
+							Frontier.add(child);
+							numnodes++;
+						}else{
+							//update child.gvalue in frontier if it is greater than 
+							//node.gvalue+1
+							if(child.getgvalue()>node.getgvalue()+1){
+								Frontier.remove(child);
+								child.setgvalue(node.getgvalue()+1);
+								child.sethvalue(child.evaluateHeuristic());
+								child.setfvalue();
+								Frontier.add(child);
+							}
+						}
+					}		
+				}
+			}
+			return false;
+	}//end of A*
+		
 	
 }
