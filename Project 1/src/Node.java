@@ -361,8 +361,7 @@ public class Node{
     
     private double gvalue; //To be used by A*Star search
     private double hvalue; //To be used by A*Star search
-    
-    
+    private double fvalue;
     /**
      * Constructor to be used by A*Star search only.
      * par - The parent node.
@@ -394,10 +393,16 @@ public class Node{
     {
     	return this.gvalue;
     }
+    public void setfvalue(){
+        this.fvalue = this.gvalue + this.hvalue;
+    }
+    public double getfvalue(){
+        return this.fvalue;
+    }
 
     public void sethvalue(double h)
     {
-    	this.gvalue = h;
+    	this.hvalue = h;
     }
     
     public double gethvalue()
@@ -411,7 +416,7 @@ public class Node{
      * Returns the heuristic value. The heuristic for the state of this node is the sum of Manhattan
      * distances from each tile's position to that tile's final position.
      */
-   // public double evaluateHeuristic() {
+   public double evaluateHeuristic() {
         // TO DO
         /*
          * Implementation notes:
@@ -419,9 +424,40 @@ public class Node{
          * stored in "int[][] board".
          * You may find the method "getManhattanDistance" useful.
          */
-
-    
-    //}
+        double sum = 0.0;
+        for(int i=0; i<size; i++){
+            for(int j=0; j<size; j++){
+                if (this.board[i][j]==0){
+                    sum+=getManhattanDistance(i,j,2,2);
+                }
+                else if (board[i][j]==1){
+                    sum+=getManhattanDistance(i,j,0,0);                    
+                }
+                else if (board[i][j]==2){
+                    sum+=getManhattanDistance(i,j,0,1);
+                }
+                else if (board[i][j]==3){
+                    sum+=getManhattanDistance(i,j,0,2);
+                }
+                else if (board[i][j]==4){
+                    sum+=getManhattanDistance(i,j,1,0);
+                }
+                else if (board[i][j]==5){
+                    sum+=getManhattanDistance(i,j,1,1);
+                }
+                else if (board[i][j]==6){
+                    sum+=getManhattanDistance(i,j,1,2);
+                }
+                else if (board[i][j]==7){
+                    sum+=getManhattanDistance(i,j,2,0);
+                }
+                else if (board[i][j]==8){
+                    sum+=getManhattanDistance(i,j,2,1);
+                }
+            }
+        }
+        return sum;
+    }
     
     /**
      * Helper method used by A* Search only. 
