@@ -226,12 +226,14 @@ public class SudokuPlayer implements Runnable, ActionListener {
     // This is discussed in the book. You may change this method header.
      private final void allDiff(int[] all){
         // YOUR CODE HERE
+      // I think you did this in the previous method
      }
 
     
     // This is the Recursive AC3.  ( You may change this method header )
      private final boolean AC3_DFS(int cell, ArrayList<Integer>[] Domains) {
-         recursions += 1;
+        AC3();
+        recursions += 1;
          // YOUR CODE HERE
          return false;
      }
@@ -241,6 +243,19 @@ public class SudokuPlayer implements Runnable, ActionListener {
     // This is the actual AC-3 Algorithm ( You may change this method header)
     private final boolean AC3(ArrayList<Integer>[] Domains) {
         // YOUR CODE HERE
+        ArrayList<Arc>[] Arcs;
+        int nums = 0;
+        while(Arcs.isEmpty() == false) {
+          Domains.remove(nums);
+          if() {
+            if(Domains.size() == 0) {
+              return false;
+            }
+            for() {
+              
+            }
+          }
+        }
         return true;
     }
     
@@ -250,7 +265,14 @@ public class SudokuPlayer implements Runnable, ActionListener {
     private final boolean Revise(Arc t, ArrayList<Integer>[] Domains){
         ops += 1;
         // YOUR CODE HERE
-        return false;
+        boolean revised = false;
+        for(int i = 0; i < Domains.size(); i++) {
+          if() {
+            Domains.remove(i);
+            revised = true;
+          }
+        }
+        return revised;
     }
 
         
