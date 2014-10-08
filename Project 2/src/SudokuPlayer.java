@@ -1,8 +1,8 @@
-
 import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.Arrays;
@@ -13,19 +13,19 @@ import java.util.Scanner;
 
 public class SudokuPlayer implements Runnable, ActionListener {
 
-	// final values must be assigned in vals[][]
+    // final values must be assigned in vals[][]
     int[][] vals = new int[9][9];
     Board board = null;
-	
+    
 
 
-	/// --- AC-3 Constraint Satisfication --- ///
-	/**
-	 * Discussion and Comments about AC3:
-	 * 
-	 */
-	
-	// Useful but not required Data-Structures;
+    /// --- AC-3 Constraint Satisfication --- ///
+    /**
+     * Discussion and Comments about AC3:
+     * 
+     */
+    
+    // Useful but not required Data-Structures;
     ArrayList<Integer>[] globalDomains = new ArrayList[81];
     ArrayList<Integer>[] neighbors = new ArrayList[81];
     Queue<Arc> globalQueue = new LinkedList<Arc>();
@@ -37,38 +37,199 @@ public class SudokuPlayer implements Runnable, ActionListener {
      */
     private final void AC3Init(){
         //Do NOT remove these 3 lines (required for the GUI)
-    	board.Clear();
+        board.Clear();
         ops = 0;
         recursions = 0;
-		
-		
+        
+        
         /**
-		*  YOUR CODE HERE:
+        *  YOUR CODE HERE:
         *  Create Data structures ( or populate the ones defined above ).
-		*  These will be the data structures necessary for AC-3. 
+        *  These will be the data structures necessary for AC-3. 
         **/
+        //Adds domains of each cell to globalDomains
+        int count=0;
+        ArrayList<Integer> values = new ArrayList<Integer>();
+        for(int k=0;k<9;k++){
+            values.add(k,k+1);
+        }
+        for(int i=0;i<9;i++){
+            for(int j=0;i<9;i++){
+                    if(vals[i][j]==0){
+                        globalDomains[count]=values;
+                    }else{
+                        ArrayList<Integer> single = new ArrayList<Integer>();
+                        single.add(vals[i][j]);
+                        globalDomains[count]= single;
+                    }
+                    count++;
+            }
+        }//end
+        
+       //Adds neighbors
+        int counter=0;
+       for(int index=0;index<81;index++){
+           //row
+           ArrayList<Integer> subneighbors = new ArrayList<Integer>();
+           subneighbors.add(counter+((index+1)%9));
+           subneighbors.add(counter+((index+2)%9));
+           subneighbors.add(counter+((index+3)%9));
+           subneighbors.add(counter+((index+4)%9));
+           subneighbors.add(counter+((index+5)%9));
+           subneighbors.add(counter+((index+6)%9));
+           subneighbors.add(counter+((index+7)%9));
+           subneighbors.add(counter+((index+8)%9));
+           //columns
+           subneighbors.add(((index+1*9)%81));
+           subneighbors.add(((index+2*9)%81));
+           subneighbors.add(((index+3*9)%81));
+           subneighbors.add(((index+4*9)%81));
+           subneighbors.add(((index+5*9)%81));
+           subneighbors.add(((index+6*9)%81));
+           subneighbors.add(((index+7*9)%81));
+           subneighbors.add(((index+8*9)%81));
+           //unit Part 1 of 3
+           if(index%3==0){
+               subneighbors.add(index+1);
+               subneighbors.add(index+2);
+               if(((counter/9)%3)==0){
+                   subneighbors.add(index+9);
+                   subneighbors.add(index+18);
+                   
+                   subneighbors.add(index+10);
+                   subneighbors.add(index+19);
+                   
+                   subneighbors.add(index+11);
+                   subneighbors.add(index+20);
+               }
+               else if(((counter/9)%3)==1){
+                   subneighbors.add(index-9);
+                   subneighbors.add(index+9);
+                   
+                   subneighbors.add(index-8);
+                   subneighbors.add(index+10);
+                   
+                   subneighbors.add(index-7);
+                   subneighbors.add(index+11);
+               }
+               else if(((counter/9)%3)==2){
+                   subneighbors.add(index-9);
+                   subneighbors.add(index-18);
+                   
+                   subneighbors.add(index-8);
+                   subneighbors.add(index-17);
+                   
+                   subneighbors.add(index-7);
+                   subneighbors.add(index-16);
+               }
+           }
+           //unit part 2 of 3
+           else if(index%3==1){
+               subneighbors.add(index+1);
+               subneighbors.add(index-1);
+               if(((counter/9)%3)==0){
+                   subneighbors.add(index+8);
+                   subneighbors.add(index+10);
+                   
+                   subneighbors.add(index+9);
+                   subneighbors.add(index+17);
+                   
+                   subneighbors.add(index+18);
+                   subneighbors.add(index+19);
+               }
+               else if(((counter/9)%3)==1){
+                   subneighbors.add(index+9);
+                   subneighbors.add(index-9);
+                   
+                   subneighbors.add(index-10);
+                   subneighbors.add(index+10);
+                   
+                   subneighbors.add(index+8);
+                   subneighbors.add(index-8);
 
-        
-        
+
+               }
+               else if(((counter/9)%3)==2){
+                   subneighbors.add(index-9);
+                   subneighbors.add(index-18);
+                   
+                   subneighbors.add(index-10);
+                   subneighbors.add(index-19);
+                   
+                   subneighbors.add(index-8);
+                   subneighbors.add(index-17);
+               }
+           }
+           //unit part 3 of 3
+           else if(index%3==2){
+               subneighbors.add(index-1);
+               subneighbors.add(index-2);
+               if(((counter/9)%3)==0){
+                   subneighbors.add(index+7);
+                   subneighbors.add(index+16);
+                   
+                   subneighbors.add(index+8);
+                   subneighbors.add(index+17);
+                   
+                   subneighbors.add(index+9);
+                   subneighbors.add(index+18);
+               }
+               else if(((counter/9)%3)==1){
+                   subneighbors.add(index-11);
+                   subneighbors.add(index+7);
+                   
+                   subneighbors.add(index-10);
+                   subneighbors.add(index+8);
+                   
+                   subneighbors.add(index-9);
+                   subneighbors.add(index+9);
+
+
+               }
+               else if(((counter/9)%3)==2){
+                   subneighbors.add(index-20);
+                   subneighbors.add(index-11);
+                   
+                   subneighbors.add(index-19);
+                   subneighbors.add(index-10);
+                   
+                   subneighbors.add(index-18);
+                   subneighbors.add(index-9);
+               }
+           }
+           //Remove duplicates
+           HashSet<Integer> hs = new HashSet<Integer>();
+           hs.addAll(subneighbors);
+           subneighbors.clear();
+           subneighbors.addAll(hs);
+           
+           neighbors[index]=subneighbors;
+           counter=(counter+9)%81;
+       }//end
+       
+       //Test
+       //System.out.println("A$AP: "+neighbors[0]);
+       //System.out.println("A$AP: "+neighbors[40]);
+       
         
         
         // Initial call to AC3_DFS on cell 0 (top left)
         boolean success = AC3_DFS(0,globalDomains);
 
-		// Prints evaluation of run
-		Finished(success);
+        // Prints evaluation of run
+        Finished(success);
         
     }
 
-	
+    
     // This defines constraints between a set of variables
- 	// This is discussed in the book. You may change this method header.
+    // This is discussed in the book. You may change this method header.
      private final void allDiff(int[] all){
- 		// YOUR CODE HERE
+        // YOUR CODE HERE
      }
 
     
- 	// This is the Recursive AC3.  ( You may change this method header )
+    // This is the Recursive AC3.  ( You may change this method header )
      private final boolean AC3_DFS(int cell, ArrayList<Integer>[] Domains) {
          recursions += 1;
          // YOUR CODE HERE
@@ -79,22 +240,22 @@ public class SudokuPlayer implements Runnable, ActionListener {
      
     // This is the actual AC-3 Algorithm ( You may change this method header)
     private final boolean AC3(ArrayList<Integer>[] Domains) {
-		// YOUR CODE HERE
-		return true;
+        // YOUR CODE HERE
+        return true;
     }
-	
+    
 
-	// This is the Revise() method defined in the book
-	// ( You may change this method header )
+    // This is the Revise() method defined in the book
+    // ( You may change this method header )
     private final boolean Revise(Arc t, ArrayList<Integer>[] Domains){
         ops += 1;
-		// YOUR CODE HERE
+        // YOUR CODE HERE
         return false;
-	}
+    }
 
-		
-	/// ---------- HELPER FUNCTIONS --------- ///
-	/// ----   DO NOT EDIT REST OF FILE   --- ///
+        
+    /// ---------- HELPER FUNCTIONS --------- ///
+    /// ----   DO NOT EDIT REST OF FILE   --- ///
     public final boolean valid(int x, int y, int val){
         ops +=1;
         if (vals[x][y] == val)
@@ -174,8 +335,8 @@ public class SudokuPlayer implements Runnable, ActionListener {
         board.showMessage("Success!");
     }
 
-	/// ---- GUI + APP Code --- ////
-	/// ----   DO NOT EDIT  --- ////
+    /// ---- GUI + APP Code --- ////
+    /// ----   DO NOT EDIT  --- ////
     enum algorithm {
         AC3
     }
@@ -205,8 +366,8 @@ public class SudokuPlayer implements Runnable, ActionListener {
     enum difficulty {
         easy, medium, noSolution, hardNoSolution, random
     }
-	
-	public void actionPerformed(ActionEvent e){
+    
+    public void actionPerformed(ActionEvent e){
         String label = ((JButton)e.getSource()).getText();
         if (label.equals("AC-3"))
             AC3Init();
@@ -215,25 +376,25 @@ public class SudokuPlayer implements Runnable, ActionListener {
         else if (label.equals("Check"))
             CheckSolution();
     }
-	
-	public void run() {
+    
+    public void run() {
         board = new Board(gui,this);
         while(!initialize());
-		if (gui)
-			board.initVals(vals);
-		else {
-			board.writeVals();
-			System.out.println("Algorithm: " + alg);
-			switch(alg) {
-				default:
-				case AC3:
-					AC3Init();
-					break;
-			}
-			CheckSolution();
-		}
+        if (gui)
+            board.initVals(vals);
+        else {
+            board.writeVals();
+            System.out.println("Algorithm: " + alg);
+            switch(alg) {
+                default:
+                case AC3:
+                    AC3Init();
+                    break;
+            }
+            CheckSolution();
+        }
     }
-	
+    
     public final boolean initialize(){
         switch(level) {
             case easy:
@@ -295,14 +456,14 @@ public class SudokuPlayer implements Runnable, ActionListener {
                             return false;
                     }
                 }
-				break;
-		}
+                break;
+        }
         return true;
     }
-	
+    
     public final boolean assignRandomValue(int x, int y){
         ArrayList<Integer> pval = new ArrayList<Integer>(Arrays.asList(1,2,3,4,5,6,7,8,9));
-		
+        
         while(!pval.isEmpty()){
             int ind = rand.nextInt(pval.size());
             int i = pval.get(ind);
@@ -316,63 +477,63 @@ public class SudokuPlayer implements Runnable, ActionListener {
         for (int r = 0; r < 9; r++){
             for(int c=0;c<9;c++){
                 vals[r][c] = 0;
-			}    }
+            }    }
         return false;
     }
-	
-	private void Finished(boolean success){
-		if(success) {
-			board.writeVals();
-			board.showMessage("Solved in " + myformat.format(ops) + " ops \t(" + myformat.format(recursions) + " recusive ops)");
-		} else {
-		    board.showMessage("No valid configuration found in " + myformat.format(ops) + " ops \t(" + myformat.format(recursions) + " recursive ops)");
-		}
-	}
-	
-	public static void main(String[] args) {
-        
-		@SuppressWarnings("resource")
-		Scanner scan = new Scanner(System.in);
-    	alg = algorithm.valueOf("AC3");
-
-    	System.out.println("difficulty? \teasy (e), medium (m), noSolution (n), hardNoSolution (h), random (r)");
-   	 
-    	char c='*';
     
-    	
-    	while(c!='e'&& c!='m'&&c!='n'&&c!='h'&&c!='r'){
-    		c = scan.nextLine().charAt(0);
-    		
-	    	if(c=='e')
-	    		level = difficulty.valueOf("easy");
-	    	else if(c=='m')
-	    		level = difficulty.valueOf("medium");
-	    	else if(c=='n')
-	    		level = difficulty.valueOf("noSolution");
-	    	else if(c=='h')
-	    		level = difficulty.valueOf("hardNoSolution");
-	    	else if(c=='r')
-	    		level = difficulty.valueOf("random");
-	    	else{
-	    		System.out.println("difficulty? \teasy (e), medium (m), noSolution (n), hardNoSolution (h), random(r)");
-	    	}
-	    	//System.out.println("2: "+c+" "+level);
-    	}
-    	
-    	System.out.println("Gui? y or n ");
-    	c=scan.nextLine().charAt(0);
-    	
-		if (c=='n')
+    private void Finished(boolean success){
+        if(success) {
+            board.writeVals();
+            board.showMessage("Solved in " + myformat.format(ops) + " ops \t(" + myformat.format(recursions) + " recusive ops)");
+        } else {
+            board.showMessage("No valid configuration found in " + myformat.format(ops) + " ops \t(" + myformat.format(recursions) + " recursive ops)");
+        }
+    }
+    
+    public static void main(String[] args) {
+        
+        @SuppressWarnings("resource")
+        Scanner scan = new Scanner(System.in);
+        alg = algorithm.valueOf("AC3");
+
+        System.out.println("difficulty? \teasy (e), medium (m), noSolution (n), hardNoSolution (h), random (r)");
+     
+        char c='*';
+    
+        
+        while(c!='e'&& c!='m'&&c!='n'&&c!='h'&&c!='r'){
+            c = scan.nextLine().charAt(0);
+            
+            if(c=='e')
+                level = difficulty.valueOf("easy");
+            else if(c=='m')
+                level = difficulty.valueOf("medium");
+            else if(c=='n')
+                level = difficulty.valueOf("noSolution");
+            else if(c=='h')
+                level = difficulty.valueOf("hardNoSolution");
+            else if(c=='r')
+                level = difficulty.valueOf("random");
+            else{
+                System.out.println("difficulty? \teasy (e), medium (m), noSolution (n), hardNoSolution (h), random(r)");
+            }
+            //System.out.println("2: "+c+" "+level);
+        }
+        
+        System.out.println("Gui? y or n ");
+        c=scan.nextLine().charAt(0);
+        
+        if (c=='n')
             gui = false;
-		else 
-			gui = true;
+        else 
+            gui = true;
 
-		//System.out.println("c: "+c+", Difficulty: " + level);
+        //System.out.println("c: "+c+", Difficulty: " + level);
 
-		//System.out.println("Difficulty: " + level);
-		
+        //System.out.println("Difficulty: " + level);
+        
         SudokuPlayer app = new SudokuPlayer();
-		app.run();
+        app.run();
     }
 
 
@@ -393,23 +554,23 @@ public class SudokuPlayer implements Runnable, ActionListener {
         public void writeVals(){
             if (gui)
                 G.writeVals();
-			else {
-				for (int r = 0; r < 9; r++) {
-					if (r % 3 == 0)
-						System.out.println(" ----------------------------");
-					for (int c = 0; c < 9; c++) {
-						if (c % 3 == 0)
-							System.out.print (" | ");
-						if (vals[r][c] != 0) {
-							System.out.print(vals[r][c] + " ");
-						} else {
-							System.out.print("_ ");
-						}
-					}
-					System.out.println(" | ");
-				}
-				System.out.println(" ----------------------------");
-			}
+            else {
+                for (int r = 0; r < 9; r++) {
+                    if (r % 3 == 0)
+                        System.out.println(" ----------------------------");
+                    for (int c = 0; c < 9; c++) {
+                        if (c % 3 == 0)
+                            System.out.print (" | ");
+                        if (vals[r][c] != 0) {
+                            System.out.print(vals[r][c] + " ");
+                        } else {
+                            System.out.print("_ ");
+                        }
+                    }
+                    System.out.println(" | ");
+                }
+                System.out.println(" ----------------------------");
+            }
         }
 
         public void Clear(){
@@ -456,14 +617,14 @@ public class SudokuPlayer implements Runnable, ActionListener {
         }
 
         public void updateVals(int[][] vals) {
-        	
-        	System.out.println("calling update");
+            
+            System.out.println("calling update");
             for (int r = 0; r < 9; r++) {
                 for (int c=0; c < 9; c++) {
                     try {
                         vals[r][c] = Integer.parseInt(cells[r][c].getText());
                     } catch (java.lang.NumberFormatException e) {
-                    	System.out.println("Invalid Board: rc: "+r+" "+c);
+                        System.out.println("Invalid Board: rc: "+r+" "+c);
                         showMessage("Invalid Board: rc: "+r+" "+c);
                         return;
                     }
@@ -486,10 +647,10 @@ public class SudokuPlayer implements Runnable, ActionListener {
         }
 
         public void writeVals(){
-		    for (int r=0;r<9;r++){
-			    for(int c=0; c<9; c++){
-				    cells[r][c].setText(vals[r][c] + "");
-			}   }
+            for (int r=0;r<9;r++){
+                for(int c=0; c<9; c++){
+                    cells[r][c].setText(vals[r][c] + "");
+            }   }
         }
 
         public GUI(SudokuPlayer s){
@@ -548,13 +709,13 @@ public class SudokuPlayer implements Runnable, ActionListener {
     }
 
     Random rand = new Random();
-	
-	// ----- Helper ---- //
+    
+    // ----- Helper ---- //
     static algorithm alg = algorithm.AC3;
     static difficulty level = difficulty.easy;
     static boolean gui = true;
     static int ops;
-    static int recursions;	
+    static int recursions;  
     static int numCells = 15;
     static DecimalFormat myformat = new DecimalFormat("###,###");
 }
