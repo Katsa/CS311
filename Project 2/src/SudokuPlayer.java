@@ -28,8 +28,6 @@ public class SudokuPlayer implements Runnable, ActionListener {
     ArrayList<Integer>[] globalDomains = new ArrayList[81];
     ArrayList<Integer>[] neighbors = new ArrayList[81];
     Queue<Arc> globalQueue = new LinkedList<Arc>();
-    
-    
     /*
     * This method sets up the data structures and the initial global constraints 
     * (by calling allDiff()) and makes the initial call to AC3_DFS(). 
