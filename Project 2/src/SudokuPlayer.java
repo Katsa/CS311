@@ -295,16 +295,15 @@ public class SudokuPlayer implements Runnable, ActionListener {
     private final boolean AC3_DFS(int cell, ArrayList<Integer>[] Domains) {
         recursions += 1;
         // YOUR CODE HERE
-        return false;
-        if(AC3(Domains[cell]) == ture) {
-
-            AC3_DFS(cell+1,Domains[cell+1]);
+        if(AC3(Domains) == true) {
+        	
+            AC3_DFS(cell+1,Domains);
         }
-        else {
+       else {
           
         }
-            return false;
-     }
+        return false;
+    }
 
 	// This is the actual AC-3 Algorithm ( You may change this method header)
 	private final boolean AC3(ArrayList<Integer>[] Domains) {
@@ -317,7 +316,7 @@ public class SudokuPlayer implements Runnable, ActionListener {
 	            }
                 for(int Xk: neighbors[a$ap.Xi]){
 	                if(Xk!=a$ap.Xj){
-	                     globalQueue.add(a$ap);
+	                   globalQueue.add(a$ap);
 	                }
 	            }
 	        }
