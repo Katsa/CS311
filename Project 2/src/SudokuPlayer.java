@@ -294,25 +294,25 @@ public class SudokuPlayer implements Runnable, ActionListener {
         if(cell < 9) {
             row = 0;
         }
-        else if ( 8 < cell < 18) {
+        else if ( 8 < cell && cell < 18) {
             row = 1;
         }
-        else if ( 18 < cell < 27) {
+        else if ( 18 < cell && cell < 27) {
             row = 2;
         }
-        else if ( 27 < cell < 36) {
+        else if ( 27 < cell && cell < 36) {
             row = 3;
         }
-        else if ( 36 < cell < 45) {
+        else if ( 36 < cell && cell < 45) {
             row = 4;
         }
-        else if ( 45 < cell < 54) {
+        else if ( 45 < cell && cell < 54) {
             row = 5;
         }
-        else if ( 54 < cell < 63) {
+        else if ( 54 < cell && cell < 63) {
             row = 6;
         }
-        else if ( 63 < cell < 72) {
+        else if ( 63 < cell && cell < 72) {
             row = 7;
         }
         else {
@@ -322,7 +322,7 @@ public class SudokuPlayer implements Runnable, ActionListener {
         if(cell > 80) {
             return true;
         }
-        else if (cell == (vals[row][cell%9])) {
+        else if (vals[row][cell%9] != 0) {
             AC3_DFS(cell + 1, Domains);
         }
         else if (!AC3(Domains)) {
@@ -330,7 +330,12 @@ public class SudokuPlayer implements Runnable, ActionListener {
         }
         
         for(int v:Domains[cell]) {
-            ArrayList<Integer> tempDomains = Domains[cell];
+        	
+            ArrayList<Integer>[] tempDomains = Domains;
+            ArrayList<Integer> tempList = null;
+            tempList.add(v);
+            tempDomains[cell]= tempList;
+            
             AC3_DFS(cell+1, tempDomains); 
         }
        
