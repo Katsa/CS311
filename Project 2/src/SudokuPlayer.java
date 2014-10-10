@@ -284,7 +284,7 @@ public class SudokuPlayer implements Runnable, ActionListener {
         for(int i: all){
             for(int j :all){
                 if(j!=i){
-                    Arc a = new Arc(i,all[j]);
+                    Arc a = new Arc(i,j);
                     globalQueue.add(a);
                 }
             }
