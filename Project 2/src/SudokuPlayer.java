@@ -293,7 +293,7 @@ public class SudokuPlayer implements Runnable, ActionListener {
         }
     }
 
-    // This is the Recursive AC3.  ( You may change this method header )
+    // This is the Recursive AC3.	( You may change this method header )
     private final boolean AC3_DFS(int cell, ArrayList<Integer>[] Domains) {
         recursions += 1;
         // YOUR CODE HERE
@@ -332,12 +332,22 @@ public class SudokuPlayer implements Runnable, ActionListener {
     // ( You may change this method header )
     private final boolean Revise(Arc a$ap, ArrayList<Integer>[] Domains){
         ops += 1;
+        boolean revised=false;
         // YOUR CODE HERE
+        boolean allequal=true;
         for(int x:Domains[a$ap.Xi]){
-            if a$ap.
-        }
-        return false;
+            for (int y:Domains[a$ap.Xj]){
+                if(x!=y)
+                    allequal=false;
+            }
+            if(allequal){
+                Domains[a$ap.Xi].remove(x);
+                revised=true;
+            }
+        }       
+        return revised;
     }
+
 
         
     /// ---------- HELPER FUNCTIONS --------- ///
@@ -388,7 +398,7 @@ public class SudokuPlayer implements Runnable, ActionListener {
         // If played by hand, need to grab vals
         board.updateVals(vals);
 
-        for (int v = 0; v < 9; v++){
+        for (int v = 0; v <= 9; v++){
             // Every row is valid
             for (int r = 0; r < 9; r++)
             {
