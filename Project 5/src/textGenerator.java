@@ -41,7 +41,7 @@ public class textGenerator {
 		
 	}
 
-	public static void getText(String filename, int k) {
+	public void getText(String filename, int k) {
 		HashMap grams = new HashMap();
 		BufferedReader read = null;
 		 try {
@@ -50,7 +50,6 @@ public class textGenerator {
 		 	read = new BufferedReader(new FileReader(filename));
 		 	thisLine = read.readLine();
 		 	while(thisLine != null) {
-				//This is where we read what we want and put it in the righ tplace
 
 				int count = 0;
 
