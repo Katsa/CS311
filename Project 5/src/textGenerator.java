@@ -2,6 +2,10 @@
 import java.util.*;
 import java.math.*;
 import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
 
 public class textGenerator {
 	
@@ -35,6 +39,46 @@ public class textGenerator {
 	public void train(String file, int k){
 		
 		
+	}
+
+	public void getText(String filename, int k) {
+		Hashtable grams = new Hashtable();
+		BufferedReader read = null;
+		 try {
+		 	String thisLine;
+		 	String gramX;
+		 	read = new BufferedReader(new FileReader(filename));
+		 	thisLine = read.readLine();
+		 	while(thisLine != null) {
+				//This is where we read what we want and put it in the righ tplace
+
+				int count = 0;
+
+				for(int i = 0; i < thisLine.length()/k; i++) {
+					gramX = thisLine.substring(count, k + 1);
+					String otherGramS = gramX.substring(1) + thisLine.substring(k+1, k+2);
+					String nextGramS = thisLine.substring(count+1, k+2);
+
+					if(grams.containsValue(gramX)){
+						grams.put(gramX, nextGramS);
+					} else {
+						ArrayList al = new ArrayList();
+						al.add(nextGramS);
+					}
+					count++;
+				}
+			}
+		 } catch (IOException e) {
+		 	e.printStackTrace();
+		 } finally {
+		 	try {
+		 		if(read != null)read.close();
+		 	} catch (IOException er) {
+		 		er.printStackTrace();
+		 	}
+		 }
+
+
 	}
 	
 	//Generator: Generates numGen characters based on the transitional probabilities estimated by the trainer 

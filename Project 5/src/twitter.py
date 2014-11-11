@@ -8,7 +8,7 @@ api = TwitterAPI(
 
 # https://dev.twitter.com/rest/reference/get/search/tweets
 
-r = api.request('statuses/user_timeline', {'screen_name':'runmeb', "count": 200})
+r = api.request('statuses/user_timeline', {'screen_name':'kanyewest', "count": 200})
 
 for item in r:
     print item['text']
