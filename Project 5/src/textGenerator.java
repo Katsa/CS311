@@ -2,9 +2,7 @@
 import java.util.*;
 import java.math.*;
 import java.io.*;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.util.Random;
 
 
 public class textGenerator {
@@ -26,12 +24,14 @@ public class textGenerator {
 			System.out.print("Please enter the k value: ");
 			int k = Integer.parseInt(scan.nextLine());
 			
-			int numGen = 0;
-			while(numGen <=0 ){
-				System.out.print("Enter number of characters to generate: ");
-				numGen = Integer.parseInt(scan.nextLine());
-			}
 			
+			//int numGen = 0;
+			//while(numGen <=0 ){
+			//	System.out.print("Enter number of characters to generate: ");
+			//	numGen = Integer.parseInt(scan.nextLine());
+			//}
+			getText(file,k);
+			System.out.println();
 		}
 	}
 	
@@ -41,8 +41,8 @@ public class textGenerator {
 		
 	}
 
-	public void getText(String filename, int k) {
-		HashMap<Integer, ArrayList<String>> grams = new HashMap();
+	public static void getText(String filename, int k) {
+		HashMap grams = new HashMap();
 		BufferedReader read = null;
 		 try {
 		 	String thisLine;
@@ -84,7 +84,24 @@ public class textGenerator {
 	
 	//Generator: Generates numGen characters based on the transitional probabilities estimated by the trainer 
 	public static void generateText(HashMap<Integer,ArrayList<String>> map, int size, int numGen, int k){
-		
+		Random randomGen =  new Random();
+		int randomInt = randomGen.nextInt(map.size());
+
+		ArrayList<String> X = map.get(randomInt);
+		String gramX = X.get(0);
+
+		for(int i = 0; i < size; i++) {
+			System.out.println(gramX);
+			ArrayList temp = map.get(randomInt);
+			int randomInt2 = randomGen.nextInt((map.get(randomInt)).size());
+
+			String gramS = (String) temp.get(randomInt2);
+			String gramC =gramS.substring(k-1);
+			System.out.println(gramC);
+
+			String gramN = gramX.substring(k-1) + gramC;
+			gramX = gramN;
+		}
 	}
 	
 	
