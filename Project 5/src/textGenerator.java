@@ -42,7 +42,7 @@ public class textGenerator {
 	}
 
 	public void getText(String filename, int k) {
-		Hashtable grams = new Hashtable();
+		HashMap<Integer, ArrayList<String>> grams = new HashMap();
 		BufferedReader read = null;
 		 try {
 		 	String thisLine;
@@ -64,6 +64,7 @@ public class textGenerator {
 					} else {
 						ArrayList al = new ArrayList();
 						al.add(nextGramS);
+						grams.put(gramX,al);
 					}
 					count++;
 				}
