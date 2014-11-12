@@ -1,9 +1,9 @@
 import java.io.*;
 import java.util.*;
 import java.math.*;
-import java.io.*;
 
-class test  {
+
+class textGenerator  {
 
 	public static void main(String[] args) {
 		
@@ -26,7 +26,9 @@ class test  {
 				System.out.print("Enter number of characters to generate: ");
 				numGen = Integer.parseInt(scan.nextLine());
 			}
-			generateText(train(file,k), numGen, k);	
+			HashMap<String,ArrayList<String>> map = new HashMap<String,ArrayList<String>>();
+			map = train(file,k);
+			generateText(map, numGen, k);	
 			
 		}
 
@@ -83,6 +85,7 @@ class test  {
 		}
 		return map;
 	}
+	
 	public static void generateText(HashMap<String,ArrayList<String>> map, int numGen, int k){
 		int size = map.size();
 		Random randomGen =  new Random();
@@ -97,20 +100,33 @@ class test  {
 		//ArrayList<String> X = map.get(randomInt);
 		//String gramX = X.get(0);
 
-		for(int i = 0; i < numGen; i++) {
-			System.out.println(gramX);
+		
+		boolean done = false;
+		int count = 0;
+		while(done == false) {
+			if(numGen != count) {
+				System.out.println("String X: " + gramX);
 
-			ArrayList<String> temp = map.get(gramX);
-			int randomInt2 = randomGen.nextInt((map.get(randomInt)).size());
+				ArrayList<String> temp = map.get(gramX);
+				System.out.println("size of map: " + map.size());
+				//System.out.println("size of specific map: " + temp.size());
+				int randomInt2 = randomGen.nextInt(temp.size());
+				//System.out.println(randomInt2);
 
-			String gramS = (String) temp.get(randomInt2);
-			String gramC =gramS.substring(k-1);
-			System.out.println(gramC);
+				String gramS = (String) temp.get(randomInt2);
+				String gramC =gramS.substring(k-1);
+				System.out.println("String C: " + gramC);
 
-			String gramN = gramX.substring(k-1) + gramC;
-			gramX = gramN;
+				String gramN = gramX.substring(k-(k-1)) + gramC;
+				gramX = gramN;
+				count ++;
+			}
+			else {
+				done = true;
+			}
 		}	
 	}
+	
 }
 
 
