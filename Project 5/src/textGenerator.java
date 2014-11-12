@@ -37,7 +37,46 @@ public class textGenerator {
 	
 	//Trainer: sets up the transitional probabilities for the given k. You may modify this method header.
 	public void train(String file, int k){
-		
+		HashMap<Integer,ArrayList<String>> map = new HashMap();
+		BufferedReader read = null;
+		try {
+			String thisLine;
+			String gramX;
+			String gramS;
+			read =  new BufferedReader(new FileReader(file));
+			thisLine = read.readLine();
+			while(thisLine != null) {
+				int count = 0;
+				int location = 0;
+
+				for(int i = 0; i < thisLine.length()/k; i++) {
+					gramX = thisLine.substring(count, k + 1);
+					//gramS = gramX.substring(1) + thisLine.substring(k+1, k+2);
+					gramS = thisLine.substring(count+1, k+2);
+
+					if(map.containsValue(gramX)) {
+						map.put(,gramS)
+					}
+					else {
+						ArrayList<String> al = new ArrayList();
+						al.add(gramX);
+						al.add(gramS);
+						map.put(,al)
+						location ++;
+					}
+					count ++;
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(read != null)read.close();
+		 	} catch (IOException er) {
+	 			er.printStackTrace();
+		 	}
+		}
+
 		
 	}
 
