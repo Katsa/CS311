@@ -82,6 +82,9 @@ class tweetGenerator  {
 					}
 					count++;
 				}
+				for(String x: map.keySet()) {
+					System.out.println("["+x+"]" + map.get(x));
+				}
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -119,15 +122,20 @@ class tweetGenerator  {
 					ArrayList<String> temp = map.get(gramX);
 					//System.out.println("size of map: " + map.size());
 					//System.out.println("size of specific map: " + temp.size());
+					System.out.println("temp " + temp);
+					System.out.println(temp.size());
 					int randomInt2 = randomGen.nextInt(temp.size());
-					//System.out.println(randomInt2);
+					System.out.println("int " + randomInt2);
+					//System.out.println(temp.size()-1);
 
 					String gramS = (String) temp.get(randomInt2);
-					String gramC =gramS.substring(k-1);
+					System.out.println("String S: " + gramS);
+					String gramC =gramS.substring(gramS.length()-1);
 					System.out.println("String C: " + gramC);
 					bw.write(gramC);
 
 					String gramN = gramX.substring(k-(k-1)) + gramC;
+					System.out.println("n: "+gramN);
 					gramX = gramN;
 					count ++;
 				}
@@ -145,23 +153,3 @@ class tweetGenerator  {
 	}
 	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
