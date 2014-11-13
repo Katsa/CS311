@@ -3,7 +3,7 @@ import java.util.*;
 import java.math.*;
 
 
-class textGenerator  {
+class tweetGenerator  {
 
 	public static void main(String[] args) {
 		
