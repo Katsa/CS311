@@ -82,9 +82,11 @@ class textGenerator  {
 					}
 					count++;
 				}
+				/*
+				prints the hashmap upside down
 				for(String x: map.keySet()) {
 					System.out.println("["+x+"]" + map.get(x));
-				}
+				}*/
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -116,26 +118,23 @@ class textGenerator  {
 			int count = 0;
 			while(done == false) {
 				if(numGen != count) {
-					System.out.println("String X: " + gramX);
+					//System.out.println("String X: " + gramX);		Prints gramX
 					bw.write(gramX);
 
 					ArrayList<String> temp = map.get(gramX);
-					//System.out.println("size of map: " + map.size());
-					//System.out.println("size of specific map: " + temp.size());
-					System.out.println("temp " + temp);
-					System.out.println(temp.size());
+					//System.out.println("temp " + temp);			Prints the arraylist of gramX
+					//System.out.println(temp.size());				Prints the size of temp
 					int randomInt2 = randomGen.nextInt(temp.size());
-					System.out.println("int " + randomInt2);
-					//System.out.println(temp.size()-1);
+					//System.out.println("int " + randomInt2);		Prints the random integer generated
 
 					String gramS = (String) temp.get(randomInt2);
-					System.out.println("String S: " + gramS);
+					//System.out.println("String S: " + gramS);		Prints gramS
 					String gramC =gramS.substring(gramS.length()-1);
-					System.out.println("String C: " + gramC);
+					//System.out.println("String C: " + gramC);		Prints gramC
 					bw.write(gramC);
 
 					String gramN = gramX.substring(k-(k-1)) + gramC;
-					System.out.println("n: "+gramN);
+					//System.out.println("n: "+gramN);				Prints gramN
 					gramX = gramN;
 					count ++;
 				}
