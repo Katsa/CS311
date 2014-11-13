@@ -3,7 +3,7 @@ import java.util.*;
 import java.math.*;
 
 
-class textGenerator  {
+class wordGenerator  {
 
 	public static void main(String[] args) {
 		
@@ -26,15 +26,15 @@ class textGenerator  {
 				System.out.print("Enter number of characters to generate: ");
 				numGen = Integer.parseInt(scan.nextLine());
 			}
-			HashMap<String,ArrayList<String>> map = new HashMap<String,ArrayList<String>>();
+			HashMap<WordKgram,ArrayList<WordKgram>> map = new HashMap<WordKgram,ArrayList<WordKgram>>();
 			map = train(file,k);
-			generateText(map, numGen, k);	
+			//generateText(map, numGen, k);	
 			
 		}
 
 	} // end main
 
-	private static ArrayList<String> readFile(String filename)
+	private static String[] readFile(String filename)
 	throws Exception
 	{
 	    String line = null;
@@ -47,22 +47,49 @@ class textGenerator  {
 	    // the readLine method returns null when there is nothing else to read.
 	    while ((line = bufferedReader.readLine()) != null)
 	    {
-	        records.add(line);
+	    	String[] temp = line.split(" ");
+	    	for(String x: temp)
+	        	records.add(x);
+	    }
+	    
+	    String[] wordString = new String[records.size()];
+	    for(int i =0; i < records.size(); i++) {
+	    	wordString[i] = records.get(i);
 	    }
 	   
 	    // close the BufferedReader when we're done
 	    bufferedReader.close();
-	    return records;
+	    return wordString;
 	}
 
-	public static HashMap<String, ArrayList<String>> train(String filename, int k) {
-		HashMap<String,ArrayList<String>> map = new HashMap<String,ArrayList<String>>();
+	public static HashMap<WordKgram, ArrayList<WordKgram>> train(String filename, int k) {
+		HashMap<WordKgram,ArrayList<WordKgram>> map = new HashMap<WordKgram,ArrayList<WordKgram>>();
 	    try {
-			for(String thisLine:readFile(filename)){
+	    	String[] list = readFile(filename); 
+	    	int count=0;
+	    	while(list.length-count>k){
+				WordKgram gramX = new WordKgram(list, count, k);
+				System.out.println("gramX: "+Arrays.toString(gramX.getMyWords())+" count: "+ count);
+				WordKgram gramS;
+				if ((list.length-count)>k){
+					gramS = new WordKgram(list, count+1, k);
+					System.out.println("*+     gramS: "+Arrays.toString(gramS.getMyWords())+" count: "+ count);
+				}else{
+					gramS = new WordKgram(list, count+1, list.length-k);
+					System.out.println("*-     gramS: "+Arrays.toString(gramS.getMyWords())+" count: "+ count+"l.length-k: "+(list.length-k));
+
+				}
+				if(map.containsKey(gramX)){
+					map.get(gramX).add(gramS);
+				}else{
+					ArrayList<WordKgram> al = new ArrayList<WordKgram>();
+					al.add(gramS);
+					map.put(gramX, al);
+				}
+				count++;
 				
-				int count=0;
-				
-				while((thisLine.length()-count)>=k){
+				/*
+				 * while((thisLine.length()-count)>=k){
 					String gramX = thisLine.substring(count, k+count);
 					String otherGramS;
 					if ((thisLine.length()-count)>k){
@@ -78,15 +105,17 @@ class textGenerator  {
 					}
 					count++;
 				}
+				 */
 			}
+	
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return map;
 	}
-	
-	public static void generateText(HashMap<String,ArrayList<String>> map, int numGen, int k){
+	/*
+	public static void generateText(HashMap<WordKgram,ArrayList<WordKgram>> map, int numGen, int k){
 		int size = map.size();
 		Random randomGen =  new Random();
 		
@@ -126,5 +155,6 @@ class textGenerator  {
 			}
 		}	
 	}
+	*/
 	
 }

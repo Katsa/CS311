@@ -17,18 +17,23 @@ public class WordKgram implements Comparable<WordKgram>{
      * @n is the number of words to be stored (the k in this K-gram)
      */
     public WordKgram(String[] list, int start, int n) {
-        myWords = new String[n];
-        System.arraycopy(list, start, myWords, 0, n);
+        setMyWords(new String[n]);
+        System.arraycopy(list, start, getMyWords(), 0, n);
     }
     
-    /**
+    /*
      * Return value that meets criteria of compareTo conventions.
      * @param wg is the WordKgram to which this is compared
      * @return appropriate value less than zero, zero, or greater than zero
      */
     public int compareTo(WordKgram wg) {
         // TODO  implement this method
-        return 0;
+    	if (getMyWords().length>wg.getMyWords().length)
+            return 1;
+   	    else if (getMyWords().length==wg.getMyWords().length)
+   	        return 0;
+   	    else
+   	        return -1;
     }
     
     /**
@@ -39,9 +44,26 @@ public class WordKgram implements Comparable<WordKgram>{
     public boolean equals(Object o){
         WordKgram wg = (WordKgram) o;
         // TODO return correct value
-      
-        return true;
+        if(getMyWords().length!=wg.getMyWords().length)
+            return false;
+        else{
+            boolean bool=false;
+            for(String ww:getMyWords()){
+                if(ww.equals(wg))
+                    bool=true;
+                else{
+                    bool=false;
+                }
+            }
+            return bool;
+        }   
     }
-    
 
+	public String[] getMyWords() {
+		return myWords;
+	}
+
+	public void setMyWords(String[] myWords) {
+		this.myWords = myWords;
+	}
 }
