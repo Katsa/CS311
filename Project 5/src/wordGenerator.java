@@ -131,7 +131,10 @@ class wordGenerator  {
 				
 				String[] lalo= new String[k-1];
 				//problem is here
-				System.arraycopy(gramX.getMyWords(), 1, lalo, gramX.getMyWords().length-2, k-1);
+				System.out.println(gramX.getMyWords().length-2);
+				System.out.println("k: "+ k);
+				System.out.println(Arrays.toString(gramX.getMyWords()));
+				System.arraycopy(gramX.getMyWords(), 1, lalo, 0, k-1);
 				ArrayList<String> lalo2 = new ArrayList<String>();
 				for(String pepe:lalo){
 					lalo2.add(pepe);

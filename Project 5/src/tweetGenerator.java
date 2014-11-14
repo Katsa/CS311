@@ -37,54 +37,57 @@ class tweetGenerator  {
 
 	} // end main
 
-	private static ArrayList<String> readFile(String filename)
+	private static String[] readFile(String filename)
 	throws Exception
 	{
-	    String line = null;
-	    ArrayList<String> records = new ArrayList<String>();
+	String line = null;
+	ArrayList<String> records = new ArrayList<String>();
 	 
-	    // wrap a BufferedReader around FileReader
-	    BufferedReader bufferedReader = new BufferedReader(new FileReader(filename));
-	    
+	// wrap a BufferedReader around FileReader
+	BufferedReader bufferedReader = new BufferedReader(new FileReader(filename));
 	 
-	    // use the readLine method of the BufferedReader to read one line at a time.
-	    // the readLine method returns null when there is nothing else to read.
-	    while ((line = bufferedReader.readLine()) != null)
-	    {
-	        records.add(line);
-	    }
-	   
-	    // close the BufferedReader when we're done
-	    bufferedReader.close();
-	    return records;
+	// use the readLine method of the BufferedReader to read one line at a time.
+	// the readLine method returns null when there is nothing else to read.
+	while ((line = bufferedReader.readLine()) != null)
+	{
+	String[] temp = line.split(" ");
+	for(String x: temp)
+	records.add(x);
+	}
+	
+	String[] wordString = new String[records.size()];
+	for(int i =0; i < records.size(); i++) {
+	wordString[i] = records.get(i);
+	}
+	
+	// close the BufferedReader when we're done
+	bufferedReader.close();
+	return wordString;
 	}
 
-	public static HashMap<String, ArrayList<String>> train(String filename, int k) {
-		HashMap<String,ArrayList<String>> map = new HashMap<String,ArrayList<String>>();
-	    try {
-			for(String thisLine:readFile(filename)){
-				
-				int count=0;
-				
-				while((thisLine.length()-count)>=k){
-					String gramX = thisLine.substring(count, k+count);
-					String otherGramS;
-					if ((thisLine.length()-count)>k){
-						otherGramS = gramX.substring(1) + thisLine.substring(k+count, k+count+1);
-					}else{
-						otherGramS = gramX.substring(1);					
-					}if(map.containsKey(gramX)){
-						map.get(gramX).add(otherGramS);
-					} else {
-						ArrayList<String> al = new ArrayList<String>();
-						al.add(otherGramS);
-						map.put(gramX,al);
-					}
-					count++;
+	public static HashMap<WordKgram, ArrayList<WordKgram>> train(String filename, int k) {
+		HashMap<WordKgram,ArrayList<WordKgram>> map = new HashMap<WordKgram,ArrayList<WordKgram>>();
+		try {
+			String[] list = readFile(filename); 
+		int count=0;
+			while(list.length-count>=k){
+				WordKgram gramX = new WordKgram(list, count, k);
+				//System.out.println("gramX: "+gramX.getMyWords()[0]);
+				WordKgram gramS;
+				if ((list.length-count)>k){
+					gramS = new WordKgram(list, count+1, k);
+					//System.out.println("gramS: "+gramS.getMyWords()[0]);
+				}else{
+					gramS = new WordKgram(list, count+1, list.length-1);
 				}
-				for(String x: map.keySet()) {
-					System.out.println("["+x+"]" + map.get(x));
+				if(map.containsKey(gramX)){
+					map.get(gramX).add(gramS);
+				}else{
+					ArrayList<WordKgram> al = new ArrayList<WordKgram>();
+					al.add(gramS);
+					map.put(gramX, al);
 				}
+				count++;
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
