@@ -117,36 +117,50 @@ class wordGenerator  {
 		int count = 0;
 		while(done == false) {
 			if(numGen != count) {
-				System.out.println("String X: " + gramX);
+				//System.out.println("String X: " + Arrays.toString(gramX.getMyWords());
 
 				ArrayList<WordKgram> temp = map.get(gramX);
-				//System.out.println("size of map: " + map.size());
-				//System.out.println("size of specific map: " + temp.size());
-				int randomInt2 = randomGen.nextInt(temp.size());
-				//System.out.println(randomInt2);
+				//System.out.println("temp: " + Arrays.toString(temp));	
+				System.out.println("Array X "+ Arrays.toString(gramX.getMyWords()));
+				if(temp == null) {
+					System.out.println("...");
+					int newRandInt = randomGen.nextInt(map.size());
+					gramX = keys[newRandInt];
+				}	
+				else {
+					System.out.println("temp " + temp);	
+					//System.out.println("size of map: " + map.size());
+					//System.out.println("size of specific map: " + temp.size());
+					int randomInt2 = randomGen.nextInt(temp.size());
+					//System.out.println(randomInt2);
 
-				WordKgram gramS = (WordKgram) temp.get(randomInt2);
-				String gramC =gramS.getMyWords()[(k-1)];
-				System.out.println("String C: " + gramC+" countXgramwords: "+gramX.getMyWords().length);
-				
-				String[] lalo= new String[k-1];
-				//problem is here
-				System.out.println(gramX.getMyWords().length-2);
-				System.out.println("k: "+ k);
-				System.out.println(Arrays.toString(gramX.getMyWords()));
-				System.arraycopy(gramX.getMyWords(), 1, lalo, 0, k-1);
-				ArrayList<String> lalo2 = new ArrayList<String>();
-				for(String pepe:lalo){
-					lalo2.add(pepe);
+					WordKgram gramS = (WordKgram) temp.get(randomInt2);
+					String gramC =gramS.getMyWords()[(k-1)];
+					System.out.println("String S: " + Arrays.toString(gramS.getMyWords()));
+					System.out.println("String C: " + gramC+" countXgramwords: "+gramX.getMyWords().length);
+					
+					String[] lalo= new String[k-1];
+					//problem is here
+					//System.out.println(gramX.getMyWords().length-2);
+					//System.out.println("k: "+ k);
+					String aX = Arrays.toString(gramX.getMyWords());
+					System.arraycopy(gramX.getMyWords(), 1, lalo, 0, k-1);
+					ArrayList<String> lalo2 = new ArrayList<String>();
+					for(String pepe:lalo){
+						lalo2.add(pepe);
+					}
+					lalo2.add(gramC);
+					
+					String[] simpleArray = new String[lalo2.size()];
+					lalo2.toArray(simpleArray);
+					WordKgram gramN;
+					gramN = new WordKgram(simpleArray,0,lalo2.size());
+					String aN =  Arrays.toString(gramN.getMyWords());
+					String aC = aX + " / " +aN;
+					System.out.println(aC);
+					gramX.setMyWords(gramN.getMyWords());
+					count ++;
 				}
-				lalo2.add(gramC);
-				
-				String[] simpleArray = new String[lalo2.size()];
-				lalo2.toArray(simpleArray);
-				WordKgram gramN;
-				gramN = new WordKgram(simpleArray,0,lalo2.size());
-				gramX = gramN;
-				count ++;
 			}
 			else {
 				done = true;
