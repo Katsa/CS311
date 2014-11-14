@@ -28,7 +28,7 @@ class wordGenerator  {
 			}
 			HashMap<WordKgram,ArrayList<WordKgram>> map = new HashMap<WordKgram,ArrayList<WordKgram>>();
 			map = train(file,k);
-			//generateText(map, numGen, k);	
+			generateText(map, numGen, k);	
 			
 		}
 
@@ -69,14 +69,14 @@ class wordGenerator  {
 	    	int count=0;
 	    	while(list.length-count>k){
 				WordKgram gramX = new WordKgram(list, count, k);
-				System.out.println("gramX: "+Arrays.toString(gramX.getMyWords())+" count: "+ count);
+				//System.out.println("gramX: "+Arrays.toString(gramX.getMyWords())+" count: "+ count);
 				WordKgram gramS;
 				if ((list.length-count)>k){
 					gramS = new WordKgram(list, count+1, k);
-					System.out.println("*+     gramS: "+Arrays.toString(gramS.getMyWords())+" count: "+ count);
+					//System.out.println("*+     gramS: "+Arrays.toString(gramS.getMyWords())+" count: "+ count);
 				}else{
 					gramS = new WordKgram(list, count+1, list.length-k);
-					System.out.println("*-     gramS: "+Arrays.toString(gramS.getMyWords())+" count: "+ count+"l.length-k: "+(list.length-k));
+					//System.out.println("*-     gramS: "+Arrays.toString(gramS.getMyWords())+" count: "+ count+"l.length-k: "+(list.length-k));
 
 				}
 				if(map.containsKey(gramX)){
@@ -88,24 +88,7 @@ class wordGenerator  {
 				}
 				count++;
 				
-				/*
-				 * while((thisLine.length()-count)>=k){
-					String gramX = thisLine.substring(count, k+count);
-					String otherGramS;
-					if ((thisLine.length()-count)>k){
-						otherGramS = gramX.substring(1) + thisLine.substring(k+count, k+count+1);
-					}else{
-						otherGramS = gramX.substring(1);					
-					}if(map.containsKey(gramX)){
-						map.get(gramX).add(otherGramS);
-					} else {
-						ArrayList<String> al = new ArrayList<String>();
-						al.add(otherGramS);
-						map.put(gramX,al);
-					}
-					count++;
-				}
-				 */
+				
 			}
 	
 		} catch (Exception e) {
@@ -114,17 +97,17 @@ class wordGenerator  {
 		}
 		return map;
 	}
-	/*
+	
 	public static void generateText(HashMap<WordKgram,ArrayList<WordKgram>> map, int numGen, int k){
 		int size = map.size();
 		Random randomGen =  new Random();
 		
-		Set<String> set = map.keySet();
-		String[] keys = new String[size];
+		Set<WordKgram> set = map.keySet();
+		WordKgram[] keys = new WordKgram[size];
 		set.toArray(keys);
 		
 		int randomInt = randomGen.nextInt(map.size());
-		String gramX = keys[randomInt];
+		WordKgram gramX = keys[randomInt];
 		
 		//ArrayList<String> X = map.get(randomInt);
 		//String gramX = X.get(0);
@@ -136,17 +119,29 @@ class wordGenerator  {
 			if(numGen != count) {
 				System.out.println("String X: " + gramX);
 
-				ArrayList<String> temp = map.get(gramX);
-				System.out.println("size of map: " + map.size());
+				ArrayList<WordKgram> temp = map.get(gramX);
+				//System.out.println("size of map: " + map.size());
 				//System.out.println("size of specific map: " + temp.size());
 				int randomInt2 = randomGen.nextInt(temp.size());
 				//System.out.println(randomInt2);
 
-				String gramS = (String) temp.get(randomInt2);
-				String gramC =gramS.substring(k-1);
-				System.out.println("String C: " + gramC);
-
-				String gramN = gramX.substring(k-(k-1)) + gramC;
+				WordKgram gramS = (WordKgram) temp.get(randomInt2);
+				String gramC =gramS.getMyWords()[(k-1)];
+				System.out.println("String C: " + gramC+" countXgramwords: "+gramX.getMyWords().length);
+				
+				String[] lalo= new String[k-1];
+				//problem is here
+				System.arraycopy(gramX.getMyWords(), 1, lalo, gramX.getMyWords().length-2, k-1);
+				ArrayList<String> lalo2 = new ArrayList<String>();
+				for(String pepe:lalo){
+					lalo2.add(pepe);
+				}
+				lalo2.add(gramC);
+				
+				String[] simpleArray = new String[lalo2.size()];
+				lalo2.toArray(simpleArray);
+				WordKgram gramN;
+				gramN = new WordKgram(simpleArray,0,lalo2.size());
 				gramX = gramN;
 				count ++;
 			}
@@ -155,6 +150,6 @@ class wordGenerator  {
 			}
 		}	
 	}
-	*/
+	
 	
 }
