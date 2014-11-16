@@ -5,7 +5,7 @@ import java.math.*;
 
 class wordGenerator  {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		
 		Scanner scan = new Scanner(System.in);
 		
@@ -27,6 +27,10 @@ class wordGenerator  {
 				System.out.print("Enter number of characters to generate: ");
 				numGen = Integer.parseInt(scan.nextLine());
 			}
+			
+			System.out.println("Please input output filename: ");
+			String output = scan.nextLine();
+			
 			HashMap<WordKgram,ArrayList<WordKgram>> map = new HashMap<WordKgram,ArrayList<WordKgram>>();
 			map = train(file,k);
 			for (WordKgram key:map.keySet()){
@@ -34,7 +38,7 @@ class wordGenerator  {
 			}
 			System.out.println("------------------------");
 			System.out.println(" ");
-			generateText(map, numGen, k);	
+			generateText(map, numGen, k, output);	
 			
 		}
 
@@ -112,12 +116,15 @@ class wordGenerator  {
 		return map;
 	}
 	//Generator: Generates numGen characters based on the transitional probabilities estimated by the trainer 
-	public static void generateText(HashMap<WordKgram,ArrayList<WordKgram>> map, int numGen, int k){
+	public static void generateText(HashMap<WordKgram,ArrayList<WordKgram>> map, int numGen, int k, String output) throws IOException{
 		int size = map.size();
 		Random randomGen =  new Random();	
 		Set<WordKgram> set = map.keySet();
 		WordKgram[] keys = new WordKgram[size];
 		set.toArray(keys);
+		FileWriter fw = new FileWriter(output);
+		BufferedWriter bw = new BufferedWriter(fw);
+
 		//Randomly select first gramX
 		int randomInt = randomGen.nextInt(map.size());
 		WordKgram gramX = keys[randomInt];	
@@ -155,11 +162,13 @@ class wordGenerator  {
 					String aN =  Arrays.toString(gramN.getMyWords());
 					String aC = aX + " / " +aN;
 					System.out.println(aC);
+					
+					bw.write(aX);
 					gramX=gramN;
 					count ++;
 				}
 			}
-			
+		bw.close();	
 		}	
 	}
 	
