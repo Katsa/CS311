@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 
 /*
  * This class encapsulates K words/strings so that the
@@ -7,7 +9,8 @@
 
 public class WordKgram implements Comparable<WordKgram>{
     
-    private String[] myWords;
+  private String i = null;
+	private String[] myWords;
     
     /*
      * Store the k words that begin at index start of array list as
@@ -19,6 +22,7 @@ public class WordKgram implements Comparable<WordKgram>{
     public WordKgram(String[] list, int start, int n) {
         setMyWords(new String[n]);
         System.arraycopy(list, start, getMyWords(), 0, n);
+        i=Arrays.toString(myWords);
     }
     
     /*
@@ -35,28 +39,37 @@ public class WordKgram implements Comparable<WordKgram>{
    	    else
    	        return -1;
     }
-    
-    /**
+
+    @Override
+    public int hashCode() {
+    	return i.hashCode();
+    }
+    /*
      * Return true if this K-gram is the same as the parameter: all words the same.
      * @param o is the WordKgram to which this one is compared
      * @return true if o is equal to this K-gram
      */
-    public boolean equals(Object o){
-        WordKgram wg = (WordKgram) o;
-        // TODO return correct value
-        if(getMyWords().length!=wg.getMyWords().length)
-            return false;
-        else{
-            boolean bool=false;
-            for(String ww:getMyWords()){
-                if(ww.equals(wg))
-                    bool=true;
-                else{
-                    bool=false;
-                }
-            }
-            return bool;
-        }   
+    @Override
+    public boolean equals(Object o) {
+       if (this == o)
+          return true;
+       if (o == null)
+          return false;
+       if (getClass() != o.getClass())
+          return false;
+       WordKgram other = (WordKgram) o;
+       if (i == null) {
+          if (other.i != null)
+             return false;
+       } else if (!i.equals(other.i))
+          return false;
+       return true;
+    }
+
+
+    @Override 
+    public String toString(){
+        return Arrays.toString(myWords);
     }
 
 	public String[] getMyWords() {
