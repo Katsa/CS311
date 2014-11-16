@@ -33,9 +33,9 @@ class wordGenerator  {
 			
 			HashMap<WordKgram,ArrayList<WordKgram>> map = new HashMap<WordKgram,ArrayList<WordKgram>>();
 			map = train(file,k);
-			for (WordKgram key:map.keySet()){
-				System.out.println("["+(key.toString())+"]"+"  "+print(map.get(key)));
-			}
+			//for (WordKgram key:map.keySet()){
+			//	System.out.println("["+(key.toString())+"]"+"  "+print(map.get(key)));
+			//}
 			System.out.println("------------------------");
 			System.out.println(" ");
 			generateText(map, numGen, k, output);	
@@ -127,14 +127,19 @@ class wordGenerator  {
 
 		//Randomly select first gramX
 		int randomInt = randomGen.nextInt(map.size());
-		WordKgram gramX = keys[randomInt];	
+		WordKgram gramX = keys[randomInt];
+		for(int i = 0; i < gramX.getMyWords().length; i++) {
+			bw.write(gramX.getMyWords()[i]);
+			bw.write(" ");
+		}
+		
 		int count = 0;
 		while(numGen != count) {
 				ArrayList<WordKgram> temp = map.get(gramX);
-				System.out.println("Array in gramX "+ Arrays.toString(gramX.getMyWords()));
+				//System.out.println("Array in gramX "+ Arrays.toString(gramX.getMyWords()));
 				//This takes care of very random cases
 				if(temp == null) {
-					System.out.println("...");
+					//System.out.println("...");
 					int newRandInt = randomGen.nextInt(map.size());
 					gramX = keys[newRandInt];
 				}	
@@ -143,8 +148,8 @@ class wordGenerator  {
 					int randomInt2 = randomGen.nextInt(temp.size());
 					WordKgram gramS = (WordKgram) temp.get(randomInt2);
 					String gramC =gramS.getMyWords()[(k-1)];
-					System.out.print("String S: " + Arrays.toString(gramS.getMyWords())+"  ");
-					System.out.println("C: " + gramC);
+					//System.out.print("String S: " + Arrays.toString(gramS.getMyWords())+"  ");
+					//System.out.println("C: " + gramC);
 					//Builds gramN; which becomes the next gramX
 					String[] lalo= new String[k-1];
 					String aX = Arrays.toString(gramX.getMyWords());
@@ -160,10 +165,11 @@ class wordGenerator  {
 					WordKgram gramN;
 					gramN = new WordKgram(simpleArray,0,lalo2.size());
 					String aN =  Arrays.toString(gramN.getMyWords());
-					String aC = aX + " / " +aN;
-					System.out.println(aC);
-					
-					bw.write(aX);
+					String aC = (gramC);
+					//System.out.println(aC);
+					bw.write(aC + " ");
+					//for(int i = 0; i < gramX)
+					//bw.write(aX);
 					gramX=gramN;
 					count ++;
 				}
