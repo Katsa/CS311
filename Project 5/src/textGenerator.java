@@ -33,6 +33,8 @@ class textGenerator  {
 		
 		HashMap<String,ArrayList<String>> map = new HashMap<String,ArrayList<String>>();
 		map = train(file,k);
+		System.out.println("------------------------");
+		System.out.println(" ");
 		generateText(map, numGen, k, output);	
 		}
 	} // end main
@@ -83,11 +85,11 @@ class textGenerator  {
 					count++;
 				}
 			}
-			for(String key:map.keySet()) {
+			/*for(String key:map.keySet()) {
 				System.out.print("[" + key + "]");
 				System.out.print(map.get(key));
 				System.out.println(" ");
-			}
+			}*/
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -110,8 +112,8 @@ class textGenerator  {
 			
 			int randomInt = randomGen.nextInt(map.size());
 			String gramX = keys[randomInt];
-			System.out.println(randomInt);
-			System.out.println("gramX: " +gramX);
+			//System.out.println(randomInt);
+			//System.out.println("gramX: " +gramX);
 			//dont comment in
 			//ArrayList<String> X = map.get(randomInt);
 			//gramX = X.get(0);
@@ -119,9 +121,10 @@ class textGenerator  {
 			
 			boolean done = false;
 			int count = 0;
+			bw.write(gramX);
 			while(done == false) {
 				if(numGen != count) {
-					System.out.println("String X: " + gramX);		//Prints gramX
+					//System.out.println("String X: " + gramX);		//Prints gramX
 					
 
 					ArrayList<String> temp = map.get(gramX);
@@ -131,20 +134,20 @@ class textGenerator  {
 						//count++;
 						}
 					else {
-						System.out.println("temp " + temp);				//Prints the arraylist of gramX
-						System.out.println(temp.size());				//Prints the size of temp
+						//System.out.println("temp " + temp);				//Prints the arraylist of gramX
+						//System.out.println(temp.size());				//Prints the size of temp
 						int randomInt2 = randomGen.nextInt(temp.size());
-						System.out.println("int " + randomInt2);		//Prints the random integer generated
+						//System.out.println("int " + randomInt2);		//Prints the random integer generated
 	
 						String gramS = (String) temp.get(randomInt2);
-						System.out.println("String S: " + gramS);		//Prints gramS
+						//System.out.println("String S: " + gramS);		//Prints gramS
 						String gramC =gramS.substring(gramS.length()-1);
-						System.out.println("String C: " + gramC);		//Prints gramC
+						//System.out.println("String C: " + gramC);		//Prints gramC
 						bw.write(gramC);
 	
 						String gramN = gramX.substring(k-(k-1)) + gramC;
-						System.out.println("N: "+gramN);				//Prints gramN
-						bw.write(gramX);				
+						//System.out.println("N: "+gramN);				//Prints gramN
+										
 						gramX = gramN;
 						count ++;
 					}

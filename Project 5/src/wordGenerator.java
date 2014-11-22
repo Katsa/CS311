@@ -128,14 +128,16 @@ class wordGenerator  {
 		//Randomly select first gramX
 		int randomInt = randomGen.nextInt(map.size());
 		WordKgram gramX = keys[randomInt];
+		
+		
+		int count = 0;
 		for(int i = 0; i < gramX.getMyWords().length; i++) {
 			bw.write(gramX.getMyWords()[i]);
 			bw.write(" ");
 		}
-		
-		int count = 0;
 		while(numGen != count) {
 				ArrayList<WordKgram> temp = map.get(gramX);
+				
 				//System.out.println("Array in gramX "+ Arrays.toString(gramX.getMyWords()));
 				//This takes care of very random cases
 				if(temp == null) {
