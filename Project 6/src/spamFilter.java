@@ -42,14 +42,33 @@ public class spamFilter {
 	 * in the folder.
 	 */
 	public static ArrayList<String> readFiles(File folder){
-		
-		//List to store filenames in folder
-		ArrayList<String> filelist = new ArrayList<String>();
-		
-		//call to recursive method that reads all filenames in folder
-		listFilesForFolder(folder, filelist );
+		throws Exception {
+			String line = null;
+			//List to store filenames in folder
+			ArrayList<String> filelist = new ArrayList<String>();
+			// wrap a BufferedReader around FileReader
+		  BufferedReader bufferedReader = new BufferedReader(new FileReader(filename));
+	 		while ((line = bufferedReader.readLine()) != null)
+	    {
+	    	String[] temp = line.split(" ");
+	    	for(String x: temp)
+	    		filelist.add(x);
+	    }
+	    
+	    String[] wordString = new String[filelist.size()];
+	    for(int i =0; i < filelist.size(); i++) {
+    		wordString[i] = filelist.get(i);
+	    }
+	   
+	    // close the BufferedReader
+	    bufferedReader.close();
 
-		return filelist;
+			//call to recursive method that reads all filenames in folder
+			listFilesForFolder(folder, filelist );
+
+			return filelist;
+
+		}	
 	}
 	
 	
