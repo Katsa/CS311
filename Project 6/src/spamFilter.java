@@ -5,9 +5,9 @@ import java.util.Scanner;
 
 public class spamFilter {
 
-	final static File allfolder = new File("path to spamdata/");
-	final static File spamfolder = new File("path to spam/");
-	final static File hamfolder = new File("path to ham/");
+	final static File allfolder = new File("Users/Katsa1/Documents/College/Junior/Project 6/spamdata/");
+	final static File spamfolder = new File("Users/Katsa1/Documents/College/Junior/Project 6/spamdata/spam/");
+	final static File hamfolder = new File("Users/Katsa1/Documents/College/Junior/Project 6/spamdata/ham/");
 	
 	public static void main(String[] args) throws IOException
 	{		
@@ -23,7 +23,7 @@ public class spamFilter {
 		
 		
 		
-        System.out.println("all messages:");
+    System.out.println("all messages:");
 		readFiles(allfolder);		
 		System.out.println();
 		
