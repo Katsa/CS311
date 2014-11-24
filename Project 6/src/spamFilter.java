@@ -41,34 +41,32 @@ public class spamFilter {
 	 * Takes as parameter the name of a folder and returns a list of filenames (Strings) 
 	 * in the folder.
 	 */
-	public static ArrayList<String> readFiles(File folder){
-		throws Exception {
+	public static ArrayList<String> readFiles(File folder) throws IOException{
 			String line = null;
 			//List to store filenames in folder
 			ArrayList<String> filelist = new ArrayList<String>();
 			// wrap a BufferedReader around FileReader
-		  BufferedReader bufferedReader = new BufferedReader(new FileReader(filename));
-	 		while ((line = bufferedReader.readLine()) != null)
-	    {
-	    	String[] temp = line.split(" ");
-	    	for(String x: temp)
-	    		filelist.add(x);
-	    }
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(folder));
+	 		while ((line = bufferedReader.readLine()) != null) {
+		    	String[] temp = line.split(" ");
+		    	for(String x: temp)
+		    		filelist.add(x);
+	 		}
 	    
-	    String[] wordString = new String[filelist.size()];
-	    for(int i =0; i < filelist.size(); i++) {
-    		wordString[i] = filelist.get(i);
-	    }
+		    String[] wordString = new String[filelist.size()];
+		    for(int i =0; i < filelist.size(); i++) {
+	    		wordString[i] = filelist.get(i);
+		    }
 	   
-	    // close the BufferedReader
-	    bufferedReader.close();
+		    // close the BufferedReader
+		    bufferedReader.close();
 
 			//call to recursive method that reads all filenames in folder
 			listFilesForFolder(folder, filelist );
 
 			return filelist;
 
-		}	
+			
 	}
 	
 	
