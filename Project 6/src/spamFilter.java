@@ -44,9 +44,12 @@ public class spamFilter {
 		System.out.println("ham messages:");
 		readFiles(hamfolder);
 		*/
-		HashMap<ArrayList<Pair>,String >mapp = train(preprocess(spamfolder,50),preprocess(hamfolder,50));
+		String[] Sfeatures = preprocess(spamfolder,50);
+		String[] Hfeatures = preprocess(hamfolder,50);
+
+		HashMap<ArrayList<Pair>,String >mapp = train(Sfeatures,Hfeatures);
 		System.out.println("got here at least...");
-		classify(preprocess(spamfolder,50),preprocess(hamfolder,50), mapp);
+		classify(Sfeatures,Hfeatures, mapp);
 		System.out.println("So far so good");
 	}
 	
@@ -203,46 +206,65 @@ public class spamFilter {
 		}
 		return map;
 	}
-	
-	public static double probability(ArrayList<Pair> features, HashMap<ArrayList<Pair>,String> train_map){
-		ArrayList<String> Afilez = readFiles(allfolder);
-		ArrayList<String> Sfilez = readFiles(spamfolder);
-		double pr_S = Sfilez.size() / Afilez.size();
+	public static Pair getPairWithName(String name, ArrayList<Pair> list){
+		Pair result = null;
+		for(Pair x : list){
+			if(x.getFeature().equals(name)){
+				result = x;
+			}
+		}
+		return result;
+	}
+	public static double probability(ArrayList<Pair> features, HashMap<ArrayList<Pair>,String> train_map, double pr_S){
+
 		double pr_H = 1.0 - pr_S;
-		double pr_S_W;
+		double pr_S_W = 0.0;
 		double pr_T = 1.0;
 		double n_S = 0.0;
 		double n_H = 0.0;
 		double n_fi_S = 0.0;
 		double n_fi_H = 0.0;
-		for (Pair feat:features){
-			if(feat.getContains()){
-				for(ArrayList<Pair> key:train_map.keySet()){
-					if (train_map.get(key).equals("spam")){
-						n_S++;
-						for(Pair kip:features){
-							if(kip.getFeature().equals(feat.getFeature())){
-								if(kip.getContains())
-									n_fi_S++;
-							}
-						}
-					}else{
-						n_H++;
-						for(Pair kip:features){
-							if(kip.getFeature().equals(feat.getFeature())){
-								if(kip.getContains())
-									n_fi_H++;
-							}
-						}
+		for(ArrayList<Pair> key:train_map.keySet()){
+			if (train_map.get(key).equals("spam")){
+				n_S+=1.0;
+				for (Pair kip:features){
+					if (kip.getContains()&&getPairWithName(kip.getFeature(),key).getContains()){
+						n_fi_S+=1.0;
 					}
+
 				}
-				if(((n_H/n_fi_H)*(pr_H))==0||((n_S/n_fi_S)*(pr_S))==0)
-					System.out.println("error:zero");
-				//This computes the probability of: pr_S_W = pr_W_S * pr_S / pr_W_H * pr_H
-				pr_S_W = ((n_S/n_fi_S)*(pr_S))/((n_H/n_fi_H)*(pr_H));
-				pr_T = pr_T*pr_S_W;
-			}		
+			}else{
+				n_H+=1.0;
+				for (Pair kip:features){
+					if (kip.getContains()&&getPairWithName(kip.getFeature(),key).getContains()){
+						n_fi_H+=1.0;
+					}
+
+				}
+			}
+
+
+			if(((n_H/n_fi_H)*(pr_H))==0||((n_S/n_fi_S)*(pr_S))==0){
+				System.out.println("error:zero");
+			}else{
+				System.out.println("not zero"+((n_H/n_fi_H)*(pr_H)));
+
+			}
+					//This computes the probability of: pr_S_W = pr_W_S * pr_S / pr_W_H * pr_H
+
+			pr_S_W = ((n_S/n_fi_S)*(pr_S))/((n_H/n_fi_H)*(pr_H));
+			pr_T = pr_T*pr_S_W;
+
 		}
+
+		System.out.println("pr_S_W: "+pr_S_W);
+		System.out.println("pr_S "+pr_S);
+		System.out.println("N_s: "+n_S);
+		System.out.println("N_H: "+n_H);
+		System.out.println("nifs: "+n_fi_S);
+		System.out.println("nifh "+n_fi_H);
+		System.out.println("...PROB: "+pr_T);
+		System.out.println(" ");
 		return pr_T;
 	}
 	/*
@@ -255,8 +277,8 @@ public class spamFilter {
 		int success=0;
 		int false_pos=0;
 		int false_neg=0;
-		double d = 0.9;
-		for(int j=0;j<10;j++){
+		double d = 0.5;
+		for(int j=0;j<50;j++){
 			
 			//randomly choose a message
 			ArrayList<String> filez = readFiles(allfolder);
@@ -302,7 +324,8 @@ public class spamFilter {
 			}//ffeatures = arraylist of pairs: <feature,boolean>
 			//note whether it is ham or spam
 			//determine the set of features, D, contained in this message
-			if(probability(ffeatures,map)>=d){
+			double pr_S = (Sfilez.size()*1.0) / (filez.size()*1.0);
+			if(probability(ffeatures,map,pr_S)>=d){
 				//label message as Spam
 				if(type.equals("spam"))
 					success++;
@@ -330,7 +353,7 @@ public class spamFilter {
 
 		  public Pair(String left, boolean right) {
 		    this.feature = left;
-		    this.contains = right;
+		    Pair.contains = right;
 		  }
 
 		  public String getFeature() { return feature; }
@@ -345,7 +368,7 @@ public class spamFilter {
 		    if (!(o instanceof Pair)) return false;
 		    Pair pairo = (Pair) o;
 		    return this.feature.equals(pairo.getFeature()) &&
-		           (this.contains&&pairo.getContains());
+		           (Pair.contains&&pairo.getContains());
 		  }
 
 		}
