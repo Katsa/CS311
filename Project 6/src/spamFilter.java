@@ -4,9 +4,9 @@ import java.util.Map.Entry;
 
 public class spamFilter {
 
-	final static File allfolder = new File("/Users/nudlz/Desktop/CS/CS311/HW6/src/spamdata/");
-	final static File spamfolder = new File("/Users/nudlz/Desktop/CS/CS311/HW6/src/spamdata/spam/");
-	final static File hamfolder = new File("/Users/nudlz/Desktop/CS/CS311/HW6/src/spamdata/ham/");
+	final static File allfolder = new File("/Users/Katsa1/Documents/College/Junior/CS311/Project 6/src/spamdata/");
+	final static File spamfolder = new File("/Users/Katsa1/Documents/College/Junior/CS311/Project 6/src/spamdata/spam/");
+	final static File hamfolder = new File("/Users/Katsa1/Documents/College/Junior/CS311/Project 6/src/spamdata/ham/");
 	//the most common words in English according to wikpedia
 	final static String[] commonWords = {"the","be","to","of","and","a","in","that",
 			"have","I","it","for","not","on","with","he","as","you","do",
@@ -49,7 +49,7 @@ public class spamFilter {
 
 		HashMap<ArrayList<Pair>,String >mapp = train(Sfeatures,Hfeatures);
 		System.out.println("got here at least...");
-		classify(Sfeatures,Hfeatures, mapp);
+		classify(Sfeatures,Hfeatures, mapp, nummsgs);
 		System.out.println("So far so good");
 	}
 	
@@ -67,6 +67,9 @@ public class spamFilter {
 		listFilesForFolder(folder, filelist );
 
 		return filelist;
+	}
+	public static void writeFile(int num) {
+
 	}
 	
 	
@@ -163,6 +166,7 @@ public class spamFilter {
 		ArrayList<String> Sfilez = readFiles(spamfolder);
 		ArrayList<String>contents = new ArrayList<String>();
 		ArrayList<Pair>ffeatures = new ArrayList<Pair>();
+
 		
 		String type=null;
 		Random randomGen = new Random();
@@ -245,9 +249,9 @@ public class spamFilter {
 
 
 			if(((n_H/n_fi_H)*(pr_H))==0||((n_S/n_fi_S)*(pr_S))==0){
-				System.out.println("error:zero");
+				System.out.println("error:zero ");
 			}else{
-				System.out.println("not zero"+((n_H/n_fi_H)*(pr_H)));
+				System.out.println("not zero "+((n_H/n_fi_H)*(pr_H)));
 
 			}
 					//This computes the probability of: pr_S_W = pr_W_S * pr_S / pr_W_H * pr_H
@@ -272,12 +276,15 @@ public class spamFilter {
 	 * Classifier: Reads and classifies an email message as either spam or ham.
 	 * You may modify the method header (return type, parameters) as you see fit.
 	 */
-	public static void classify(String[] Sfeatures, String[] Hfeatures, HashMap<ArrayList<Pair>,String>map) throws IOException
+	public static void classify(String[] Sfeatures, String[] Hfeatures, HashMap<ArrayList<Pair>,String>map, int num) throws IOException
 	{
 		int success=0;
 		int false_pos=0;
 		int false_neg=0;
 		double d = 0.5;
+		BufferedWriter out = new BufferedWriter(new FileWriter("output.txt")); 
+		
+
 		for(int j=0;j<50;j++){
 			
 			//randomly choose a message
@@ -338,12 +345,28 @@ public class spamFilter {
 				else
 					false_neg++;
 			}
+			int count = 0;
+			while(count < num) {
+				out.write(name + count + "\n");
+				
+				//bw.write(rando);
+				System.out.println("done");
+				count ++;
+			}
+			//out.write(name);
+			
 		}
-		System.out.println("goods"+success);
-		System.out.println("false poss"+false_pos);
-		System.out.println("false neg"+false_neg);
+		System.out.println("goods"+success + "\n");
+		System.out.println("false poss"+false_pos + "\n");
+		System.out.println("false neg"+false_neg + "\n");
 
+		
+		out.write("success rate: " + success+ "\n");
+		out.write("false positive rate: " + false_pos+ "\n");
+		out.write("false negative rate: " + false_neg+ "\n");
+		System.out.println("output file output.txt was created.");
 
+		out.close();		
 	}
 	
 	public static class Pair {
