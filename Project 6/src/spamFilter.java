@@ -5,9 +5,9 @@ import java.util.Scanner;
 
 public class spamFilter {
 
-	final static File allfolder = new File("/src/spamdata");
-	final static File spamfolder = new File("Users/Katsa1/Documents/College/Junior/CS311/Project 6/src/spamdata.spam");
-	final static File hamfolder = new File("Users/Katsa1/Documents/College/Junior/CS311/Project 6/src/spamdata.ham");
+	final static File allfolder = new File("/Users/Katsa1/Documents/College/Junior/CS311/Project 6/src/spamdata");
+	final static File spamfolder = new File("/Users/Katsa1/Documents/College/Junior/CS311/Project 6/src/spamdata.spam");
+	final static File hamfolder = new File("/Users/Katsa1/Documents/College/Junior/CS311/Project 6/src/spamdata.ham");
 	
 	public static void main(String[] args) throws IOException
 	{		
