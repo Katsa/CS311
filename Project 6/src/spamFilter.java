@@ -44,8 +44,9 @@ public class spamFilter {
 		System.out.println("ham messages:");
 		readFiles(hamfolder);
 		*/
-		//train(preprocess(spamfolder,50),preprocess(hamfolder,50));
-		classify(preprocess(spamfolder,50),preprocess(hamfolder,50), train(preprocess(spamfolder,50),preprocess(hamfolder,50)));
+		HashMap<ArrayList<Pair>,String >mapp = train(preprocess(spamfolder,50),preprocess(hamfolder,50));
+		System.out.println("got here at least...");
+		classify(preprocess(spamfolder,50),preprocess(hamfolder,50), mapp);
 		System.out.println("So far so good");
 	}
 	
@@ -219,17 +220,25 @@ public class spamFilter {
 				for(ArrayList<Pair> key:train_map.keySet()){
 					if (train_map.get(key).equals("spam")){
 						n_S++;
-						if (key.get(key.indexOf(feat)).getContains())
-							n_fi_S++;
+						for(Pair kip:features){
+							if(kip.getFeature().equals(feat.getFeature())){
+								if(kip.getContains())
+									n_fi_S++;
+							}
+						}
 					}else{
 						n_H++;
-						if (key.get(key.indexOf(feat)).getContains())
-							n_fi_H++;
+						for(Pair kip:features){
+							if(kip.getFeature().equals(feat.getFeature())){
+								if(kip.getContains())
+									n_fi_H++;
+							}
+						}
 					}
 				}
 				if(((n_H/n_fi_H)*(pr_H))==0||((n_S/n_fi_S)*(pr_S))==0)
 					System.out.println("error:zero");
-				//pr_S_W = pr_W_S * pr_S / pr_W_H * pr_H
+				//This computes the probability of: pr_S_W = pr_W_S * pr_S / pr_W_H * pr_H
 				pr_S_W = ((n_S/n_fi_S)*(pr_S))/((n_H/n_fi_H)*(pr_H));
 				pr_T = pr_T*pr_S_W;
 			}		
@@ -247,7 +256,7 @@ public class spamFilter {
 		int false_pos=0;
 		int false_neg=0;
 		double d = 0.9;
-		for(int j=0;j<1000;j++){
+		for(int j=0;j<10;j++){
 			
 			//randomly choose a message
 			ArrayList<String> filez = readFiles(allfolder);
@@ -307,6 +316,11 @@ public class spamFilter {
 					false_neg++;
 			}
 		}
+		System.out.println("goods"+success);
+		System.out.println("false poss"+false_pos);
+		System.out.println("false neg"+false_neg);
+
+
 	}
 	
 	public static class Pair {
