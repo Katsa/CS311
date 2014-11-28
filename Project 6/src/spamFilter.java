@@ -33,7 +33,8 @@ public class spamFilter {
 		System.out.println("ham messages:");
 		readFiles(hamfolder);
 		*/
-		System.out.println(Arrays.toString(preprocess(spamfolder,50)));
+		train(preprocess(spamfolder,50),preprocess(hamfolder,50));
+		//System.out.println(Arrays.toString(preprocess(spamfolder,50)));
 	}
 	
 
@@ -95,7 +96,7 @@ public class spamFilter {
 	 */
 	public static String[] preprocess(File folder, int k) throws IOException
 	{
-		//the fifty most common words in English according to wikpedia
+		//the most common words in English according to wikpedia
 		String[] commonWords = {"the","be","to","of","and","a","in","that",
 				"have","I","it","for","not","on","with","he","as","you","do",
 				"at","this","but","his","by","from","they","we","say","her",
@@ -105,7 +106,7 @@ public class spamFilter {
 				"people","into","year","your","good","some","could","them","see",
 				"other","than","then","now","look","only","come","its","over","think",
 				"also","back","after","use","subject","two","how","i","our","work","first","well",
-				"way","even","new","want","because","any","these","give","day","most","us","is"};
+				"way","even","want","because","any","these","give","day","most","us","is"};
 		//Common words into arrayList so we can use contains method
 		ArrayList<String> commons =new ArrayList<String>(Arrays.asList(commonWords));
 		HashMap<String, Integer> freqz = new HashMap<String, Integer>();
@@ -114,6 +115,7 @@ public class spamFilter {
 		Random randomGen = new Random();
 		for (int i =0; i<100; i++){
 			int randInt = randomGen.nextInt(filez.size());
+			//needs to be fixed for hamfolder
 		    BufferedReader bufferedReader = new BufferedReader(new FileReader("src/spamdata/spam/"+filez.get(randInt)));
 		    String line = null;
 		    while ((line = bufferedReader.readLine()) != null)
@@ -142,12 +144,65 @@ public class spamFilter {
 	 * Trainer: Reads email messages and computes probabilities for the Bayesian formula.
 	 * You may modify the method header (return type, parameters) as you see fit.
 	 */
-	public static void train()
+	public static HashMap<String, ArrayList<Pair>> train(String[] Sfeatures, String[] Hfeatures) throws IOException
 	{
+		HashMap<String, ArrayList<Pair>>map=new HashMap<String, ArrayList<Pair>>();
+		//read random 1000 files
+		ArrayList<String> filez = readFiles(allfolder);
+		ArrayList<String> Sfilez = readFiles(spamfolder);
+		ArrayList<String>contents = new ArrayList<String>();
+		ArrayList<Pair>ffeatures = new ArrayList<Pair>();
 		
+		Random randomGen = new Random();
+		for(int i=0;i<1000;i++){
+			String name = filez.get(randomGen.nextInt(filez.size()));
+			BufferedReader bufferedReader;
+			if(Sfilez.contains(name)){
+				bufferedReader = new BufferedReader(new FileReader("src/spamdata/spam/"+name));
+			}else{
+				bufferedReader = new BufferedReader(new FileReader("src/spamdata/ham/"+name));
+			}
+			String line = null;
+			while ((line = bufferedReader.readLine()) != null){
+				String[] temp = line.replaceAll("[^a-zA-Z ]", "").toLowerCase().split("\\s+");
+				for(String xt: temp){
+					contents.add(xt);
+				}
+			}
+			//store which features the message contains.
+			for(String feat:Sfeatures){
+				if(contents.contains(feat)){
+					Pair st = new Pair(feat,true);
+					ffeatures.add(st);
+				}else{
+					Pair sf = new Pair(feat,false);
+					ffeatures.add(sf);
+				}
+			}
+			for(String feat:Hfeatures){
+				if(contents.contains(feat)){
+					Pair ht = new Pair(feat,true);
+					ffeatures.add(ht);
+				}else{
+					Pair hf = new Pair(feat,false);
+					ffeatures.add(hf);
+				}
+			}
+			map.put(name,ffeatures);
+		}
+		return map;
 	}
-
-
+	p
+	public static double probalility(int type, HashMap<String,ArrayList<Pair>> map){
+		if(type==1){
+			for(String k:map.keySet()){
+				
+			}
+		}else{
+			
+		}
+		return 0.0;
+	}
 	/*
 	 * TO DO
 	 * Classifier: Reads and classifies an email message as either spam or ham.
@@ -155,7 +210,55 @@ public class spamFilter {
 	 */
 	public static void classify()
 	{
-		
+		for(int j=0;j<1000;j++){
+			int success=0;
+			int false_pos=0;
+			int false_neg=0;
+			double d = 0.9;
+			//randomly choose a message
+			//note whether it is ham or spam
+			//determine the set of features, D, contained in this message
+			if(probability(1,D)>=d){
+				//label message as Spam
+				if(message is spam)
+					success++;
+				else
+					false_pos++;
+			}else{
+				//label message as ham
+				if(message is ham)
+					success++;
+				else
+					false_neg++;
+			}
+		}
 	}
+	
+	public static class Pair {
+
+		  private final String feature;
+		  private final boolean contains;
+
+		  public Pair(String left, boolean right) {
+		    this.feature = left;
+		    this.contains = right;
+		  }
+
+		  public String getFeature() { return feature; }
+		  public boolean getContains() { return contains; }
+
+		  @Override
+		  public int hashCode() { return feature.hashCode() *31; }
+
+		  @Override
+		  public boolean equals(Object o) {
+		    if (o == null) return false;
+		    if (!(o instanceof Pair)) return false;
+		    Pair pairo = (Pair) o;
+		    return this.feature.equals(pairo.getFeature()) &&
+		           (this.contains&&pairo.getContains());
+		  }
+
+		}
 	
 }
