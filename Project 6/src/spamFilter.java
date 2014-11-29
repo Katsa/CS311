@@ -28,27 +28,15 @@ public class spamFilter {
 		System.out.println("How many messages to classify?");
 		
 		int nummsgs = Integer.parseInt(scan.nextLine());
-		System.out.println("Classifying 1000 random messages...");
+		System.out.println("Classifying " + nummsgs + " random messages...");
 		
 		
 		
-		/*
-        System.out.println("all messages:");
-		readFiles(allfolder);		
-		System.out.println();
-		
-		System.out.println("spam messages:");
-		readFiles(spamfolder);
-		System.out.println();
-		
-		System.out.println("ham messages:");
-		readFiles(hamfolder);
-		*/
 		String[] Sfeatures = preprocess(spamfolder,50);
 		String[] Hfeatures = preprocess(hamfolder,50);
 
 		HashMap<ArrayList<Pair>,String >mapp = train(Sfeatures,Hfeatures);
-		System.out.println("got here at least...");
+		//System.out.println("got here at least...");
 		classify(Sfeatures,Hfeatures, mapp, nummsgs);
 		System.out.println("So far so good");
 	}
@@ -85,7 +73,6 @@ public class spamFilter {
 	        else {
 	        	String filename = fileEntry.getName();
 	        	files.add(filename);
-	            //System.out.println(filename);
 	        }
 	    }
 	}
@@ -248,12 +235,12 @@ public class spamFilter {
 			}
 
 
-			if(((n_H/n_fi_H)*(pr_H))==0||((n_S/n_fi_S)*(pr_S))==0){
+			/*if(((n_H/n_fi_H)*(pr_H))==0||((n_S/n_fi_S)*(pr_S))==0){
 				System.out.println("error:zero ");
 			}else{
 				System.out.println("not zero "+((n_H/n_fi_H)*(pr_H)));
 
-			}
+			}*/
 					//This computes the probability of: pr_S_W = pr_W_S * pr_S / pr_W_H * pr_H
 
 			pr_S_W = ((n_S/n_fi_S)*(pr_S))/((n_H/n_fi_H)*(pr_H));
@@ -261,14 +248,14 @@ public class spamFilter {
 
 		}
 
-		System.out.println("pr_S_W: "+pr_S_W);
+		/*//System.out.println("pr_S_W: "+pr_S_W);
 		System.out.println("pr_S "+pr_S);
 		System.out.println("N_s: "+n_S);
 		System.out.println("N_H: "+n_H);
 		System.out.println("nifs: "+n_fi_S);
 		System.out.println("nifh "+n_fi_H);
 		System.out.println("...PROB: "+pr_T);
-		System.out.println(" ");
+		System.out.println(" ");*/
 		return pr_T;
 	}
 	/*
@@ -347,23 +334,15 @@ public class spamFilter {
 			}
 			int count = 0;
 			while(count < num) {
-				out.write(name + count + "\n");
-				
-				//bw.write(rando);
-				System.out.println("done");
+				out.write(name + "\n");
 				count ++;
 			}
 			//out.write(name);
 			
 		}
-		System.out.println("goods"+success + "\n");
-		System.out.println("false poss"+false_pos + "\n");
-		System.out.println("false neg"+false_neg + "\n");
-
-		
-		out.write("success rate: " + success+ "\n");
-		out.write("false positive rate: " + false_pos+ "\n");
-		out.write("false negative rate: " + false_neg+ "\n");
+		out.write("success rate: " + success + "%" + "\n");
+		out.write("false positive rate: " + false_pos+ "%" + "\n");
+		out.write("false negative rate: " + false_neg+ "%" + "\n");
 		System.out.println("output file output.txt was created.");
 
 		out.close();		
